@@ -1,0 +1,13 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: utravs-events-dlq
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: utravs-kafka
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    min.insync.replicas: 2
+    retention.ms: 86400000
