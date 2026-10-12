@@ -40,3 +40,6 @@ admin.conf
 .vscode/
 .idea/
 *.swp
+
+__pycache__/
+*.py[cod]
