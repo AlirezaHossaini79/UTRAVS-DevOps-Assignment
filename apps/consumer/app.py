@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 import os
@@ -6,7 +7,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Event, Thread
 
-from confluent_kafka import Consumer, KafkaException, TopicPartition
+from confluent_kafka import Consumer, KafkaException, Producer
 from prometheus_client import (
     Counter,
     Gauge,
@@ -27,6 +28,8 @@ BOOTSTRAP = os.getenv(
 TOPIC = os.getenv("KAFKA_TOPIC", "utravs-events")
 GROUP_ID = os.getenv("KAFKA_GROUP_ID", "utravs-consumer-group")
 
+DLQ_TOPIC = os.getenv("KAFKA_DLQ_TOPIC", "utravs-events-dlq")
+
 running = Event()
 running.set()
 ready = Event()
@@ -39,6 +42,11 @@ processed_total = Counter(
 errors_total = Counter(
     "utravs_consumer_errors_total",
     "Consumer processing errors",
+)
+
+dlq_total = Counter(
+    "utravs_consumer_dlq_total",
+    "Messages successfully sent to the dead letter queue",
 )
 
 consumer_lag = Gauge(
@@ -107,6 +115,50 @@ def process_message(message):
     )
 
 
+
+def send_to_dlq(producer, message, error):
+    record = {
+        "source_topic": message.topic(),
+        "source_partition": message.partition(),
+        "source_offset": message.offset(),
+        "error_type": type(error).__name__,
+        "error": str(error)[:500],
+        "original_value_base64": base64.b64encode(
+            message.value() or b""
+        ).decode("ascii"),
+    }
+
+    delivery_results = []
+
+    def on_delivery(err, msg):
+        delivery_results.append(err)
+
+    producer.produce(
+        DLQ_TOPIC,
+        key=message.key(),
+        value=json.dumps(record).encode("utf-8"),
+        on_delivery=on_delivery,
+    )
+
+    remaining = producer.flush(20)
+
+    if (
+        remaining != 0
+        or not delivery_results
+        or delivery_results[0] is not None
+    ):
+        raise RuntimeError(
+            f"DLQ delivery failed: {delivery_results}"
+        )
+
+    logger.warning(
+        "event_sent_to_dlq topic=%s partition=%s offset=%s",
+        message.topic(),
+        message.partition(),
+        message.offset(),
+    )
+
+
 def update_lag(consumer):
     for partition in consumer.assignment():
         low, high = consumer.get_watermark_offsets(
@@ -136,6 +188,13 @@ def main():
         target=http_server.serve_forever,
         daemon=True,
     ).start()
+
+    dlq_producer = Producer({
+        "bootstrap.servers": BOOTSTRAP,
+        "acks": "all",
+        "enable.idempotence": True,
+        "delivery.timeout.ms": 15000,
+    })
 
     consumer = Consumer({
         "bootstrap.servers": BOOTSTRAP,
@@ -172,21 +231,33 @@ def main():
                     continue
 
                 try:
-                    process_message(msg)
+                    try:
+                        process_message(msg)
+                        valid = True
 
-                    # Commit only after successful processing.
+                    except (ValueError, TypeError, KeyError, UnicodeError) as exc:
+                        logger.warning(
+                            "Invalid event: %s; routing to DLQ", exc
+                        )
+                        send_to_dlq(dlq_producer, msg, exc)
+                        valid = False
+
+                    # Commit only after processing or confirmed DLQ delivery.
                     consumer.commit(
                         message=msg,
                         asynchronous=False,
                     )
-                    processed_total.inc()
+
+                    if valid:
+                        processed_total.inc()
+                    else:
+                        dlq_total.inc()
 
                 except Exception:
                     errors_total.inc()
                     logger.exception(
-                        "Processing failed; offset not committed"
+                        "Processing, DLQ delivery or commit failed"
                     )
-                    # Restart rather than skip a failed message.
                     raise
 
             if time.monotonic() - last_lag_check >= 5:
