@@ -1,0 +1,100 @@
+{{- range $name := list "producer" "consumer" }}
+{{- $cfg := index $.Values $name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utravs-{{ $name }}
+  labels:
+    app: utravs-{{ $name }}
+spec:
+  replicas: {{ $cfg.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  selector:
+    matchLabels:
+      app: utravs-{{ $name }}
+
+  template:
+    metadata:
+      labels:
+        app: utravs-{{ $name }}
+
+    spec:
+      serviceAccountName: utravs-{{ $name }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 45
+
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: {{ $name }}
+          image: "{{ $cfg.image.repository }}:{{ required (printf "%s.image.tag is required" $name) $cfg.image.tag }}"
+          imagePullPolicy: {{ $cfg.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: {{ $cfg.port }}
+
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ $.Values.kafka.bootstrapServers | quote }}
+            - name: KAFKA_TOPIC
+              value: {{ $.Values.kafka.topic | quote }}
+            {{- if eq $name "consumer" }}
+            - name: KAFKA_GROUP_ID
+              value: {{ $.Values.kafka.consumerGroup | quote }}
+            {{- end }}
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+
+          resources:
+            {{- toYaml $cfg.resources | nindent 12 }}
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+{{- end }}

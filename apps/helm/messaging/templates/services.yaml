@@ -1,0 +1,19 @@
+{{- range $name := list "producer" "consumer" }}
+{{- $cfg := index $.Values $name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: utravs-{{ $name }}
+  labels:
+    app: utravs-{{ $name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: utravs-{{ $name }}
+  ports:
+    - name: http
+      port: {{ $cfg.port }}
+      targetPort: http
+      protocol: TCP
+{{- end }}
