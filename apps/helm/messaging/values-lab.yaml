@@ -9,4 +9,4 @@ producer:
 consumer:
   replicaCount: 2
   image:
-    tag: "sha-9f4df3c6735f1e819c9b032ecf1e4844f462c7f5"
+    tag: "sha-bbd0d7fc53875403b2577e4f480bc26f5101a140"
