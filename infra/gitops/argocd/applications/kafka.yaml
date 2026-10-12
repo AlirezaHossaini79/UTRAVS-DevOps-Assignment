@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
+    targetRevision: main
+    path: infra/messaging/kafka
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=false
