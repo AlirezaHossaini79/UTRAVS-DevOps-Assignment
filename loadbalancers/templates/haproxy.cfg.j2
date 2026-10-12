@@ -1,0 +1,27 @@
+
+global
+    log /dev/log local0
+    maxconn 2000
+    daemon
+
+defaults
+    log global
+    mode tcp
+    option tcplog
+    timeout connect 5s
+    timeout client 1m
+    timeout server 1m
+
+frontend kubernetes_api
+    bind *:{{ apiserver_port }}
+    mode tcp
+    default_backend kubernetes_api_backend
+
+backend kubernetes_api_backend
+    mode tcp
+    balance roundrobin
+    option tcp-check
+
+{% for cp in control_planes %}
+    server {{ cp.name }} {{ cp.ip }}:6443 check inter 2s fall 3 rise 2
+{% endfor %}

@@ -1,0 +1,46 @@
+
+---
+- name: Configure Kubernetes API Load Balancers
+  hosts: loadbalancers
+  become: true
+
+  vars:
+    apiserver_port: 6443
+    control_planes:
+      - name: cp-01
+        ip: 172.16.90.129
+      - name: cp-02
+        ip: 172.16.90.130
+      - name: cp-03
+        ip: 172.16.90.131
+
+  tasks:
+    - name: Install HAProxy
+      ansible.builtin.apt:
+        name: haproxy
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Configure HAProxy
+      ansible.builtin.template:
+        src: templates/haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+        validate: "/usr/sbin/haproxy -c -f %s"
+      notify: Restart HAProxy
+
+    - name: Enable and start HAProxy
+      ansible.builtin.systemd_service:
+        name: haproxy
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart HAProxy
+      ansible.builtin.systemd_service:
+        name: haproxy
+        state: restarted

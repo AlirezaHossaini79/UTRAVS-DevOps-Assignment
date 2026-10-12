@@ -1,0 +1,37 @@
+global_defs {
+    router_id {{ inventory_hostname }}
+    script_user root
+    enable_script_security
+}
+
+vrrp_script chk_haproxy {
+    script "/usr/bin/systemctl is-active --quiet haproxy"
+    interval 2
+    timeout 2
+    weight 0
+    fall 2
+    rise 2
+}
+
+vrrp_instance VI_KUBE_API {
+    state BACKUP
+    interface ens33
+    virtual_router_id 51
+    priority {{ vrrp_priority }}
+    advert_int 1
+
+    unicast_src_ip {{ ansible_host }}
+    check_unicast_src
+
+    unicast_peer {
+        {{ vrrp_peer }}
+    }
+
+    virtual_ipaddress {
+        172.16.90.135/24 dev ens33
+    }
+
+    track_script {
+        chk_haproxy
+    }
+}

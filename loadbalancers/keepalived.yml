@@ -1,0 +1,35 @@
+---
+- name: Configure Keepalived HA
+  hosts: loadbalancers
+  become: true
+
+  tasks:
+    - name: Install Keepalived
+      ansible.builtin.apt:
+        name: keepalived
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Configure Keepalived
+      ansible.builtin.template:
+        src: templates/keepalived.conf.j2
+        dest: /etc/keepalived/keepalived.conf
+        owner: root
+        group: root
+        mode: "0644"
+        backup: true
+        validate: "/usr/sbin/keepalived -t -f %s"
+      notify: Restart Keepalived
+
+    - name: Enable and start Keepalived
+      ansible.builtin.systemd_service:
+        name: keepalived
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart Keepalived
+      ansible.builtin.systemd_service:
+        name: keepalived
+        state: restarted

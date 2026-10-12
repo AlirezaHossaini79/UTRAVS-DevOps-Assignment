@@ -1,0 +1,42 @@
+# Python virtual environments
+.venv/
+__pycache__/
+*.pyc
+
+# Upstream Kubespray repository
+/kubespray/
+
+# Downloaded third-party Helm charts
+/infra/operators/strimzi/chart/
+/infra/gitops/argocd/chart/
+
+# Runtime logs and test evidence (review before publishing)
+/logs/
+/evidence/
+
+# Archives
+*.tar.gz
+*.zip
+
+# Credentials and sensitive configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*kubeconfig*
+admin.conf
+.ssh/
+.kube/
+
+# Terraform state
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Editor files
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,45 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: combined
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: utravs-kafka
+spec:
+  replicas: 3
+  roles:
+    - controller
+    - broker
+
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: 2Gi
+        class: local-path
+        deleteClaim: false
+        kraftMetadata: shared
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 768Mi
+    limits:
+      cpu: "2"
+      memory: 1536Mi
+
+  jvmOptions:
+    -Xms: 512m
+    -Xmx: 512m
+
+  template:
+    pod:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  strimzi.io/cluster: utravs-kafka
+                  strimzi.io/pool-name: combined
+              topologyKey: kubernetes.io/hostname

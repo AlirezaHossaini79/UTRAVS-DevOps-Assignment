@@ -1,0 +1,22 @@
+# Strimzi Operator - HA Configuration
+
+replicas: 3
+
+watchAnyNamespace: false
+watchNamespaces:
+  - kafka
+leaderElection:
+  enable: true
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            name: strimzi-cluster-operator
+            strimzi.io/kind: cluster-operator
+        topologyKey: kubernetes.io/hostname

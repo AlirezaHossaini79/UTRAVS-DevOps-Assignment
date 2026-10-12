@@ -1,0 +1,99 @@
+# UTRAVS - Argo CD Standard HA
+# Helm chart: 10.10.2
+# Argo CD: v3.5.4
+
+global:
+  affinity:
+    podAntiAffinity: hard
+
+controller:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 768Mi
+
+server:
+  replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
+  service:
+    type: ClusterIP
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+repoServer:
+  replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 150m
+      memory: 256Mi
+    limits:
+      memory: 768Mi
+
+applicationSet:
+  replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 384Mi
+
+redis-ha:
+  enabled: true
+  replicas: 3
+  hardAntiAffinity: true
+
+  persistentVolume:
+    enabled: false
+
+  podDisruptionBudget:
+    minAvailable: 2
+
+  redis:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 384Mi
+
+  sentinel:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        memory: 192Mi
+
+  haproxy:
+    replicas: 3
+    hardAntiAffinity: true
+    podDisruptionBudget:
+      minAvailable: 2
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
