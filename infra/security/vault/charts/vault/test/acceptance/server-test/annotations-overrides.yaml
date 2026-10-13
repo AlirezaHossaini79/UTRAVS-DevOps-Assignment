@@ -1,0 +1,12 @@
+# Copyright IBM Corp. 2018, 2026
+# SPDX-License-Identifier: MPL-2.0
+
+server:
+  annotations: |
+    environment: production
+    milk: oat
+    myName: "{{ .Release.Name }}"
+  service:
+    annotations:
+      active: sometimes
+      pickMe: please

@@ -1,0 +1,205 @@
+# Copyright IBM Corp. 2018, 2026
+# SPDX-License-Identifier: MPL-2.0
+
+# name_prefix returns the prefix of the resources within Kubernetes.
+name_prefix() {
+    printf "vault"
+}
+
+# chart_dir returns the directory for the chart
+chart_dir() {
+    echo ${BATS_TEST_DIRNAME}/../..
+}
+
+# helm_install installs the vault chart. This will source overridable
+# values from the "values.yaml" file in this directory. This can be set
+# by CI or other environments to do test-specific overrides. Note that its
+# easily possible to break tests this way so be careful.
+helm_install() {
+    local values="${BATS_TEST_DIRNAME}/values.yaml"
+    if [ ! -f "${values}" ]; then
+        touch $values
+    fi
+
+    helm install -f ${values} \
+        --name vault \
+        ${BATS_TEST_DIRNAME}/../..
+}
+
+# helm_install_ha installs the vault chart using HA mode. This will source
+# overridable values from the "values.yaml" file in this directory. This can be
+# set by CI or other environments to do test-specific overrides. Note that its
+# easily possible to break tests this way so be careful.
+helm_install_ha() {
+    local values="${BATS_TEST_DIRNAME}/values.yaml"
+    if [ ! -f "${values}" ]; then
+        touch $values
+    fi
+
+    helm install -f ${values} \
+        --name vault \
+        --set 'server.enabled=false' \
+        --set 'serverHA.enabled=true' \
+        ${BATS_TEST_DIRNAME}/../..
+}
+
+# check_vault_versions checks the deployed helm chart values match the expected
+# vault version, where expected is either specified by the VAULT_VERSION
+# environment variable or the defaults in values.yaml.
+check_vault_versions(){
+    helm_deployment_name=$1
+    local expected_version
+    if [ -n "${VAULT_VERSION}" ]; then
+        expected_version=${VAULT_VERSION}
+    else
+        # expect the defaults in values.yaml to all be the same
+        expected_version=$(yq -r '.server.image.tag' values.yaml)
+        [ "${expected_version}" = "$(yq -r '.injector.agentImage.tag' values.yaml)" ]
+        [ "${expected_version}" = "$(yq -r '.csi.agent.image.tag' values.yaml)" ]
+    fi
+
+    if [ "${ENT_TESTS}" = "true" ]; then
+        expected_version="${expected_version}-ent"
+    fi
+
+    local values
+    values=$(helm get values "${helm_deployment_name}" --all)
+    [ "${expected_version}" = "$(echo "${values}" | yq -r '.server.image.tag')" ]
+    [ "${expected_version}" = "$(echo "${values}" | yq -r '.injector.agentImage.tag')" ]
+    [ "${expected_version}" = "$(echo "${values}" | yq -r '.csi.agent.image.tag')" ]
+}
+
+# wait for consul to be ready
+wait_for_running_consul() {
+    kubectl wait --for=condition=Ready --timeout=5m pod -l app=consul,component=client
+}
+
+wait_for_sealed_vault() {
+    POD_NAME=$1
+
+    check() {
+        sealed_status=$(kubectl exec $1 -- vault status -format=json | jq -r '.sealed')
+        if [ "$sealed_status" == "true" ]; then
+            return 0
+        fi
+        return 1
+    }
+
+    for i in $(seq 60); do
+        if check ${POD_NAME}; then
+            echo "Vault on ${POD_NAME} is running."
+            return
+        fi
+
+        echo "Waiting for Vault on ${POD_NAME} to be running..."
+        sleep 2
+    done
+
+    echo "Vault on ${POD_NAME} never became running."
+    return 1
+}
+
+# wait for a pod to be running
+wait_for_running() {
+    POD_NAME=$1
+
+    check() {
+        # This requests the pod and checks whether the status is running
+        # and the ready state is true. If so, it outputs the name. Otherwise
+        # it outputs empty. Therefore, to check for success, check for nonzero
+        # string length.
+        kubectl get pods $1 -o json | \
+            jq -r 'select(
+                .status.phase == "Running" and
+                ([ .status.conditions[] | select(.type == "Ready" and .status == "False") ] | length) == 1
+            ) | .metadata.namespace + "/" + .metadata.name'
+    }
+
+    for i in $(seq 60); do
+        if [ -n "$(check ${POD_NAME})" ]; then
+            echo "${POD_NAME} is ready."
+            return
+        fi
+
+        echo "Waiting for ${POD_NAME} to be ready..."
+        sleep 2
+    done
+
+    echo "${POD_NAME} never became ready."
+    return 1
+}
+
+wait_for_ready() {
+    POD_NAME=$1
+
+    check() {
+        # This requests the pod and checks whether the status is running
+        # and the ready state is true. If so, it outputs the name. Otherwise
+        # it outputs empty. Therefore, to check for success, check for nonzero
+        # string length.
+        kubectl get pods $1 -o json | \
+            jq -r 'select(
+                .status.phase == "Running" and
+                ([ .status.conditions[] | select(.type == "Ready" and .status == "True") ] | length) == 1
+            ) | .metadata.namespace + "/" + .metadata.name'
+    }
+
+    for i in $(seq 60); do
+        if [ -n "$(check ${POD_NAME})" ]; then
+            echo "${POD_NAME} is ready."
+            sleep 5
+            return
+        fi
+
+        echo "Waiting for ${POD_NAME} to be ready..."
+        sleep 2
+    done
+
+    echo "${POD_NAME} never became ready."
+    return 1
+}
+
+wait_for_complete_job() {
+	POD_NAME=$1
+
+    check() {
+        # This requests the pod and checks whether the status is running
+        # and the ready state is true. If so, it outputs the name. Otherwise
+        # it outputs empty. Therefore, to check for success, check for nonzero
+        # string length.
+        kubectl get job $1 -o json | \
+            jq -r 'select(
+                .status.succeeded == 1 
+            ) | .metadata.namespace + "/" + .metadata.name'
+    }
+
+    for i in $(seq 60); do
+        if [ -n "$(check ${POD_NAME})" ]; then
+            echo "${POD_NAME} is complete."
+            sleep 5
+            return
+        fi
+
+        echo "Waiting for ${POD_NAME} to be complete..."
+        sleep 2
+    done
+
+    echo "${POD_NAME} never completed."
+    return 1
+}
+
+# skip_if_k8s_version_lt skips the test if Kubernetes version is less than the specified version
+# Usage: skip_if_k8s_version_lt "1.35"
+skip_if_k8s_version_lt() {
+    local required_version=$1
+    local required_major=$(echo $required_version | cut -d. -f1)
+    local required_minor=$(echo $required_version | cut -d. -f2)
+
+    local k8s_version=$(kubectl version -o json | jq -r '.serverVersion.gitVersion' | sed 's/v//')
+    local k8s_major=$(echo $k8s_version | cut -d. -f1)
+    local k8s_minor=$(echo $k8s_version | cut -d. -f2)
+
+    if [ "$k8s_major" -lt "$required_major" ] || ([ "$k8s_major" -eq "$required_major" ] && [ "$k8s_minor" -lt "$required_minor" ]); then
+        skip "Test requires Kubernetes >= ${required_version}, current version is ${k8s_version}"
+    fi
+}

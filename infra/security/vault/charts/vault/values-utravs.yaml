@@ -1,0 +1,92 @@
+global:
+  enabled: true
+  tlsDisable: false
+
+injector:
+  enabled: false
+
+csi:
+  enabled: false
+
+server:
+  enabled: true
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 192Mi
+    limits:
+      cpu: 600m
+      memory: 640Mi
+
+  dataStorage:
+    enabled: true
+    storageClass: local-path
+    size: 2Gi
+    accessMode: ReadWriteOnce
+
+  extraEnvironmentVars:
+    VAULT_CACERT: /vault/userconfig/vault-ha-tls/ca.crt
+
+  volumes:
+    - name: vault-ha-tls
+      secret:
+        secretName: vault-ha-tls
+
+  volumeMounts:
+    - name: vault-ha-tls
+      mountPath: /vault/userconfig/vault-ha-tls
+      readOnly: true
+
+  standalone:
+    enabled: false
+
+  ha:
+    enabled: true
+    replicas: 3
+
+    raft:
+      enabled: true
+      setNodeId: true
+
+      config: |
+        ui = true
+        cluster_name = "utravs-vault"
+
+        listener "tcp" {
+          address         = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_disable     = 0
+          tls_cert_file   = "/vault/userconfig/vault-ha-tls/tls.crt"
+          tls_key_file    = "/vault/userconfig/vault-ha-tls/tls.key"
+          tls_client_ca_file = "/vault/userconfig/vault-ha-tls/ca.crt"
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+
+          retry_join {
+            leader_api_addr = "https://vault-0.vault-internal.vault.svc.cluster.local:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-ha-tls/ca.crt"
+          }
+
+          retry_join {
+            leader_api_addr = "https://vault-1.vault-internal.vault.svc.cluster.local:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-ha-tls/ca.crt"
+          }
+
+          retry_join {
+            leader_api_addr = "https://vault-2.vault-internal.vault.svc.cluster.local:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-ha-tls/ca.crt"
+          }
+        }
+
+        service_registration "kubernetes" {}
+
+        telemetry {
+          prometheus_retention_time = "30s"
+          disable_hostname = true
+        }
+
+ui:
+  enabled: false
