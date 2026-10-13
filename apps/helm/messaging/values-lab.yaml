@@ -4,7 +4,7 @@ imagePullSecrets:
 producer:
   replicaCount: 2
   image:
-    tag: "sha-7b96a021b4d33da740a5e1235917e871a41ec62d"
+    tag: "sha-8de2de921d96162f3aca8ee75330b932aaa8449f"
 
 consumer:
   replicaCount: 2
