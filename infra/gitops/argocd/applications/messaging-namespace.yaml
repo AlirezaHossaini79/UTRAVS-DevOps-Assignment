@@ -4,3 +4,4 @@ metadata:
   name: messaging
   labels:
     app.kubernetes.io/part-of: utravs
+    istio-injection: enabled
