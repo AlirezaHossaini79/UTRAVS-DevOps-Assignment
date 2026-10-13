@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: utravs-vault-ca
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/part-of: utravs-messaging
+data:
+  ca.crt: |
+{{ required "Vault CA certificate is missing" (.Files.Get "files/vault/ca.crt") | indent 4 }}

@@ -102,6 +102,12 @@ spec:
             - name: kafka-ca
               mountPath: /etc/kafka
               readOnly: true
+            - name: vault-sa-token
+              mountPath: /var/run/secrets/tokens
+              readOnly: true
+            - name: vault-ca
+              mountPath: /etc/vault
+              readOnly: true
 
       volumes:
         - name: tmp
@@ -109,4 +115,13 @@ spec:
         - name: kafka-ca
           configMap:
             name: utravs-kafka-ca
+        - name: vault-sa-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: vault-jwt
+                  expirationSeconds: 600
+        - name: vault-ca
+          configMap:
+            name: utravs-vault-ca
 {{- end }}
