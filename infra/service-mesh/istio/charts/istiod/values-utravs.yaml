@@ -16,3 +16,6 @@ affinity:
           matchLabels:
             app: istiod
         topologyKey: kubernetes.io/hostname
+
+base:
+  validationFailurePolicy: Fail
