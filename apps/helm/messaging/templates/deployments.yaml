@@ -41,6 +41,9 @@ spec:
         runAsUser: 10001
         seccompProfile:
           type: RuntimeDefault
+        {{- if $.Values.kafka.clientAuth.enabled }}
+        fsGroup: 10001
+        {{- end }}
 
       containers:
         - name: {{ $name }}
@@ -60,6 +63,12 @@ spec:
               value: {{ $.Values.kafka.securityProtocol | quote }}
             - name: KAFKA_SSL_CA_LOCATION
               value: {{ $.Values.kafka.sslCaLocation | quote }}
+            {{- if $.Values.kafka.clientAuth.enabled }}
+            - name: KAFKA_SSL_CERT_LOCATION
+              value: {{ $.Values.kafka.clientAuth.certLocation | quote }}
+            - name: KAFKA_SSL_KEY_LOCATION
+              value: {{ $.Values.kafka.clientAuth.keyLocation | quote }}
+            {{- end }}
             - name: KAFKA_TOPIC
               value: {{ $.Values.kafka.topic | quote }}
             {{- if eq $name "consumer" }}
@@ -102,6 +111,11 @@ spec:
             - name: kafka-ca
               mountPath: /etc/kafka
               readOnly: true
+            {{- if $.Values.kafka.clientAuth.enabled }}
+            - name: kafka-client
+              mountPath: /etc/kafka-client
+              readOnly: true
+            {{- end }}
             - name: vault-sa-token
               mountPath: /var/run/secrets/tokens
               readOnly: true
@@ -115,6 +129,12 @@ spec:
         - name: kafka-ca
           configMap:
             name: utravs-kafka-ca
+        {{- if $.Values.kafka.clientAuth.enabled }}
+        - name: kafka-client
+          secret:
+            secretName: {{ index $.Values.kafka.clientAuth.secretNames $name | quote }}
+            defaultMode: 0440
+        {{- end }}
         - name: vault-sa-token
           projected:
             sources:

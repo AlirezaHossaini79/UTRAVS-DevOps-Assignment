@@ -232,6 +232,24 @@ def kafka_tls_options():
 
         options["ssl.ca.location"] = ca_path
 
+        cert_path = os.getenv("KAFKA_SSL_CERT_LOCATION", "").strip()
+        key_path = os.getenv("KAFKA_SSL_KEY_LOCATION", "").strip()
+
+        if bool(cert_path) != bool(key_path):
+            raise ValueError(
+                "Kafka client certificate and key must be configured together"
+            )
+
+        if cert_path:
+            for file_path in (cert_path, key_path):
+                if not os.path.isfile(file_path):
+                    raise FileNotFoundError(
+                        f"Kafka mTLS credential missing: {file_path}"
+                    )
+
+            options["ssl.certificate.location"] = cert_path
+            options["ssl.key.location"] = key_path
+
     return options
 
 

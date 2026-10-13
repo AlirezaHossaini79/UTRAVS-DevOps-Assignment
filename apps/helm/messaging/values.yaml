@@ -4,6 +4,13 @@ kafka:
   bootstrapServers: utravs-kafka-kafka-bootstrap.kafka.svc.cluster.local:9093
   securityProtocol: SSL
   sslCaLocation: /etc/kafka/ca.crt
+  clientAuth:
+    enabled: false
+    certLocation: /etc/kafka-client/user.crt
+    keyLocation: /etc/kafka-client/user.key
+    secretNames:
+      producer: utravs-producer-kafka-client
+      consumer: utravs-consumer-kafka-client
   topic: utravs-events
   consumerGroup: utravs-consumer-group
 
