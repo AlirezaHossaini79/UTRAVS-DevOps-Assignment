@@ -23,6 +23,10 @@ spec:
     metadata:
       labels:
         app: utravs-{{ $name }}
+{{- if eq $name "producer" }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+{{- end }}
 
     spec:
       serviceAccountName: utravs-{{ $name }}
