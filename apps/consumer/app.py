@@ -177,6 +177,33 @@ def update_lag(consumer):
             ).set(lag)
 
 
+
+def kafka_tls_options():
+    protocol = os.getenv(
+        "KAFKA_SECURITY_PROTOCOL", "PLAINTEXT"
+    ).upper()
+
+    if protocol not in ("PLAINTEXT", "SSL"):
+        raise ValueError(f"Unsupported Kafka protocol: {protocol}")
+
+    options = {"security.protocol": protocol}
+
+    if protocol == "SSL":
+        ca_path = os.getenv(
+            "KAFKA_SSL_CA_LOCATION",
+            "/etc/kafka/ca.crt"
+        )
+
+        if not os.path.isfile(ca_path):
+            raise FileNotFoundError(
+                f"Kafka CA certificate missing: {ca_path}"
+            )
+
+        options["ssl.ca.location"] = ca_path
+
+    return options
+
+
 def main():
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
@@ -191,6 +218,7 @@ def main():
 
     dlq_producer = Producer({
         "bootstrap.servers": BOOTSTRAP,
+        **kafka_tls_options(),
         "acks": "all",
         "enable.idempotence": True,
         "delivery.timeout.ms": 15000,
@@ -198,6 +226,7 @@ def main():
 
     consumer = Consumer({
         "bootstrap.servers": BOOTSTRAP,
+        **kafka_tls_options(),
         "group.id": GROUP_ID,
         "auto.offset.reset": "earliest",
         "enable.auto.commit": False,

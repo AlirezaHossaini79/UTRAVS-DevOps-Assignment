@@ -21,8 +21,36 @@ KAFKA_BOOTSTRAP = os.getenv(
 )
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "utravs-events")
 
+
+def kafka_tls_options():
+    protocol = os.getenv(
+        "KAFKA_SECURITY_PROTOCOL", "PLAINTEXT"
+    ).upper()
+
+    if protocol not in ("PLAINTEXT", "SSL"):
+        raise ValueError(f"Unsupported Kafka protocol: {protocol}")
+
+    options = {"security.protocol": protocol}
+
+    if protocol == "SSL":
+        ca_path = os.getenv(
+            "KAFKA_SSL_CA_LOCATION",
+            "/etc/kafka/ca.crt"
+        )
+
+        if not os.path.isfile(ca_path):
+            raise FileNotFoundError(
+                f"Kafka CA certificate missing: {ca_path}"
+            )
+
+        options["ssl.ca.location"] = ca_path
+
+    return options
+
+
 producer = Producer({
     "bootstrap.servers": KAFKA_BOOTSTRAP,
+    **kafka_tls_options(),
     "acks": "all",
     "enable.idempotence": True,
     "delivery.timeout.ms": 15000,
