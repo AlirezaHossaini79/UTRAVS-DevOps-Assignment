@@ -1,12 +1,17 @@
+kafka:
+  bootstrapServers: utravs-kafka-kafka-bootstrap.kafka.svc.cluster.local:9094
+  clientAuth:
+    enabled: true
+
 imagePullSecrets:
   - name: ghcr-pull
 
 producer:
   replicaCount: 2
   image:
-    tag: "sha-8de2de921d96162f3aca8ee75330b932aaa8449f"
+    tag: "sha-aad1d649597481c7f79a5627f73a02300bb05331"
 
 consumer:
   replicaCount: 2
   image:
-    tag: "sha-66f8f7110849172fe68e0e786fc408752ae5c429"
+    tag: "sha-aad1d649597481c7f79a5627f73a02300bb05331"
