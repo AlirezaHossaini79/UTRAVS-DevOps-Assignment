@@ -1,11 +1,11 @@
 imagePullSecrets: []
 
 kafka:
-  bootstrapServers: utravs-kafka-kafka-bootstrap.kafka.svc.cluster.local:9093
+  bootstrapServers: utravs-kafka-kafka-bootstrap.kafka.svc.cluster.local:9094
   securityProtocol: SSL
   sslCaLocation: /etc/kafka/ca.crt
   clientAuth:
-    enabled: false
+    enabled: true
     certLocation: /etc/kafka-client/user.crt
     keyLocation: /etc/kafka-client/user.key
     secretNames:

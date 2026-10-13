@@ -10,16 +10,6 @@ spec:
     metadataVersion: 4.3-IV0
 
     listeners:
-      - name: plain
-        port: 9092
-        type: internal
-        tls: false
-
-      - name: tls
-        port: 9093
-        type: internal
-        tls: true
-
       - name: mtls
         port: 9094
         type: internal
