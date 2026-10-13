@@ -56,6 +56,10 @@ spec:
               value: "1"
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: {{ $.Values.kafka.bootstrapServers | quote }}
+            - name: KAFKA_SECURITY_PROTOCOL
+              value: {{ $.Values.kafka.securityProtocol | quote }}
+            - name: KAFKA_SSL_CA_LOCATION
+              value: {{ $.Values.kafka.sslCaLocation | quote }}
             - name: KAFKA_TOPIC
               value: {{ $.Values.kafka.topic | quote }}
             {{- if eq $name "consumer" }}
@@ -95,8 +99,14 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: kafka-ca
+              mountPath: /etc/kafka
+              readOnly: true
 
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: kafka-ca
+          configMap:
+            name: utravs-kafka-ca
 {{- end }}
