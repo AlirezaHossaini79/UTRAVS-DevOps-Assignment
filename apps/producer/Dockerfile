@@ -6,6 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
+COPY vault_client.py .
 
 RUN useradd --uid 10001 --create-home appuser
 USER 10001

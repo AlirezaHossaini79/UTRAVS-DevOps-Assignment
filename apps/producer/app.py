@@ -8,6 +8,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from confluent_kafka import Producer
+from vault_client import VaultClient, VaultUnavailable
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
@@ -57,6 +58,7 @@ producer = Producer({
 })
 
 app = FastAPI(title="UTRAVS Event Producer")
+vault_client = VaultClient("utravs-producer")
 
 events_total = Counter(
     "utravs_producer_events_total",
@@ -123,10 +125,30 @@ def publish_event(request: EventRequest):
 
     with publish_duration.time():
         try:
+            payload_bytes = json.dumps(
+                message,
+                ensure_ascii=False,
+                separators=(",", ":")
+            ).encode("utf-8")
+
+            signature = vault_client.sign_message(payload_bytes)
+
+        except VaultUnavailable:
+            events_total.labels(result="error").inc()
+            logger.error("Vault Transit signing unavailable")
+            raise HTTPException(
+                status_code=503,
+                detail="Signing service unavailable"
+            )
+
+        try:
             producer.produce(
                 topic=KAFKA_TOPIC,
                 key=request.booking_id.encode("utf-8"),
-                value=json.dumps(message).encode("utf-8"),
+                value=payload_bytes,
+                headers=[
+                    ("utravs-signature", signature.encode("ascii"))
+                ],
                 callback=delivery_callback,
             )
         except Exception as exc:
