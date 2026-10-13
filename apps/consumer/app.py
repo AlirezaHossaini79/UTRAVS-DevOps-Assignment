@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Event, Thread
 
 from confluent_kafka import Consumer, KafkaException, Producer
+from vault_client import VaultClient
 from prometheus_client import (
     Counter,
     Gauge,
@@ -92,6 +93,36 @@ class HealthHandler(BaseHTTPRequestHandler):
 def stop(signum, frame):
     logger.info("Shutdown signal received")
     running.clear()
+
+
+
+def verify_event_signature(message, vault_client):
+    signatures = [
+        value
+        for name, value in (message.headers() or [])
+        if name == "utravs-signature"
+    ]
+
+    if len(signatures) != 1:
+        raise ValueError("Missing or duplicate event signature")
+
+    raw_signature = signatures[0]
+
+    if not isinstance(raw_signature, bytes):
+        raise ValueError("Invalid signature header")
+
+    try:
+        signature = raw_signature.decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Invalid signature encoding") from exc
+
+    if not signature.startswith("vault:v") or len(signature) > 256:
+        raise ValueError("Invalid signature format")
+
+    if not vault_client.verify_message(
+        message.value() or b"", signature
+    ):
+        raise ValueError("Event signature verification failed")
 
 
 def process_message(message):
@@ -216,6 +247,8 @@ def main():
         daemon=True,
     ).start()
 
+    vault_client = VaultClient("utravs-consumer")
+
     dlq_producer = Producer({
         "bootstrap.servers": BOOTSTRAP,
         **kafka_tls_options(),
@@ -261,6 +294,7 @@ def main():
 
                 try:
                     try:
+                        verify_event_signature(msg, vault_client)
                         process_message(msg)
                         valid = True
 
