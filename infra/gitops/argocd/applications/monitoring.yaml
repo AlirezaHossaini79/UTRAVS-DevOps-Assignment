@@ -70,6 +70,18 @@ spec:
 
         prometheus:
           enabled: true
+          additionalServiceMonitors:
+            - name: utravs-istiod
+              namespaceSelector:
+                matchNames:
+                  - istio-system
+              selector:
+                matchLabels:
+                  app: istiod
+              endpoints:
+                - port: http-monitoring
+                  path: /metrics
+                  interval: 30s
           prometheusSpec:
             replicas: 1
             retention: 3d
