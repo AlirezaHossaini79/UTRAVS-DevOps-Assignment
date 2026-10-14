@@ -8,6 +8,12 @@ spec:
   kafka:
     version: 4.3.1
     metadataVersion: 4.3-IV0
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: utravs-kafka-jmx-metrics
+          key: metrics-config.yml
 
     listeners:
       - name: mtls
