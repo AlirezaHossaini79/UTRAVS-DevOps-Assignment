@@ -1,0 +1,23 @@
+=== Vault AppRole Credential Rotation Test ===
+Wed Oct 14 10:39:11 AM UTC 2026
+=== Test Results ===
+Event 1: HTTP 201, Kafka offset 5
+Wait: 65 seconds
+Event 2: HTTP 201, Kafka offset 6
+Credential TTL: 60 seconds
+SecretID allowed uses: 1
+=== Producer Credential Rotation ===
+INFO:utravs.vault:vault_runtime_credential_rotated role=utravs-producer secret_id_ttl=60s secret_id_uses=1 runtime_token_ttl=60s
+INFO:utravs.vault:vault_runtime_credential_rotated role=utravs-producer secret_id_ttl=60s secret_id_uses=1 runtime_token_ttl=60s
+=== Consumer Credential Rotation ===
+2026-10-14 10:36:35,759 INFO vault_runtime_credential_rotated role=utravs-consumer secret_id_ttl=60s secret_id_uses=1 runtime_token_ttl=60s
+2026-10-14 10:37:41,045 INFO vault_runtime_credential_rotated role=utravs-consumer secret_id_ttl=60s secret_id_uses=1 runtime_token_ttl=60s
+=== Final Pod Status ===
+NAME                               READY   STATUS    RESTARTS   AGE
+utravs-consumer-6dd5b5bfbc-kwj4m   2/2     Running   0          6m20s
+utravs-consumer-6dd5b5bfbc-qghz9   2/2     Running   0          6m41s
+utravs-producer-78f9d48f76-5w5wk   2/2     Running   0          6m41s
+utravs-producer-78f9d48f76-9bqxf   2/2     Running   0          6m25s
+=== ArgoCD Status ===
+NAME        SYNC STATUS   HEALTH STATUS
+messaging   Synced        Healthy
