@@ -45,6 +45,10 @@ spec:
               memory: 512Mi
 
         kube-state-metrics:
+          image:
+            registry: k8s-mirror.liara.ir
+            repository: kube-state-metrics/kube-state-metrics
+            tag: v2.20.0
           resources:
             requests:
               cpu: 50m
