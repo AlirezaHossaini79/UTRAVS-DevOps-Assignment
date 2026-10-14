@@ -1,0 +1,20 @@
+Wed Oct 14 08:40:05 PM UTC 2026
+NAME         SYNC STATUS   HEALTH STATUS
+monitoring   Synced        Healthy
+NAME                                                     READY   STATUS    RESTARTS   AGE
+alertmanager-monitoring-kube-prometheus-alertmanager-0   2/2     Running   0          3m25s
+monitoring-kube-prometheus-operator-867bd849d8-b46hd     1/1     Running   0          4m36s
+monitoring-kube-state-metrics-6cf7bff66c-twb2h           1/1     Running   0          14m
+monitoring-prometheus-node-exporter-5657r                1/1     Running   0          20m
+monitoring-prometheus-node-exporter-grr5w                1/1     Running   0          20m
+monitoring-prometheus-node-exporter-tjzrv                1/1     Running   0          20m
+monitoring-prometheus-node-exporter-wh2wk                1/1     Running   0          20m
+prometheus-monitoring-kube-prometheus-prometheus-0       2/2     Running   0          3m25s
+NAME                                                                     VERSION              DESIRED   READY   RECONCILED   AVAILABLE   AGE
+prometheus.monitoring.coreos.com/monitoring-kube-prometheus-prometheus   v3.14.0-distroless   1         1       True         True        20m
+
+NAME                                                                         VERSION   REPLICAS   READY   RECONCILED   AVAILABLE   AGE
+alertmanager.monitoring.coreos.com/monitoring-kube-prometheus-alertmanager   v0.34.1   1          1       True         True        20m
+NAME                                                                                                             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+alertmanager-monitoring-kube-prometheus-alertmanager-db-alertmanager-monitoring-kube-prometheus-alertmanager-0   Bound    pvc-db2a3c83-e5a1-46f1-ae98-5617850cf979   1Gi        RWO            local-path     <unset>                 3m25s
+prometheus-monitoring-kube-prometheus-prometheus-db-prometheus-monitoring-kube-prometheus-prometheus-0           Bound    pvc-4c099a61-8d4f-4137-bae4-76cfedb762a0   5Gi        RWO            local-path     <unset>                 3m25s
