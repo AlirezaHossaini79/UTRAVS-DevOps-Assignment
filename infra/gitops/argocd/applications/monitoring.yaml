@@ -36,6 +36,8 @@ spec:
         prometheusOperator:
           admissionWebhooks:
             enabled: false
+          tls:
+            enabled: false
           resources:
             requests:
               cpu: 100m
