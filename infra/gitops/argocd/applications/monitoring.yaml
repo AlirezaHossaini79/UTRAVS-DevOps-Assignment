@@ -14,6 +14,22 @@ spec:
     helm:
       releaseName: monitoring
       valuesObject:
+        additionalPrometheusRulesMap:
+          utravs-consumer-lag:
+            groups:
+            - name: utravs.messaging
+              rules:
+              - alert: KafkaConsumerLagHigh
+                expr: sum(max by (topic, partition) (utravs_consumer_lag{job="utravs-messaging-istio",topic="utravs-events"}))
+                  > 100
+                for: 2m
+                labels:
+                  severity: warning
+                  component: kafka
+                annotations:
+                  summary: UTRAVS consumer lag is high
+                  description: Consumer lag across unique partitions exceeded 100 for 2 minutes.
+
         grafana:
           enabled: false
 
