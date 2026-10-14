@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: utravs-vault-availability
+  namespace: monitoring
+spec:
+  groups:
+  - name: utravs.vault
+    rules:
+    - alert: VaultUnavailable
+      expr: (sum(probe_success{job="utravs-vault-health"}) or vector(0)) < 3 or (sum(up{job="utravs-vault-health"})
+        or vector(0)) < 3
+      for: 2m
+      labels:
+        severity: critical
+        component: vault
+      annotations:
+        summary: One or more Vault nodes are unavailable
+        description: Vault health probes or monitoring scrapes are failing. Check
+          probe_success and up by vault_node.

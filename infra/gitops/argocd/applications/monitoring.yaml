@@ -127,6 +127,32 @@ spec:
             ruleSelector: {}
             ruleNamespaceSelector: {}
             additionalScrapeConfigs:
+              - job_name: utravs-vault-health
+                scrape_interval: 30s
+                scrape_timeout: 10s
+                metrics_path: /probe
+                params:
+                  module:
+                  - vault_health
+                static_configs:
+                - targets:
+                  - https://vault-0.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
+                  - https://vault-1.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
+                  - https://vault-2.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
+                relabel_configs:
+                - source_labels:
+                  - __address__
+                  target_label: __param_target
+                - source_labels:
+                  - __param_target
+                  target_label: instance
+                - source_labels:
+                  - __param_target
+                  regex: https://(vault-[0-2])\.vault-internal\.vault\.svc\.cluster\.local:8200/.*
+                  target_label: vault_node
+                  replacement: $1
+                - target_label: __address__
+                  replacement: utravs-vault-blackbox.monitoring.svc.cluster.local:9115
               - job_name: utravs-messaging-istio
                 scrape_interval: 30s
                 metrics_path: /stats/prometheus
