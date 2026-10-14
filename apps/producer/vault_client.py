@@ -62,20 +62,61 @@ class VaultClient:
     def _authenticate(self):
         jwt = self.jwt_path.read_text().strip()
 
-        response = self._request(
+        # First authenticate with Kubernetes ServiceAccount JWT.
+        bootstrap = self._request(
             "auth/kubernetes/login",
-            payload={"role": self.role, "jwt": jwt}
+            payload={"role": self.role, "jwt": jwt},
+        )
+        bootstrap_token = bootstrap["auth"]["client_token"]
+        runtime_role = f"{self.role}-runtime"
+
+        # Get the AppRole identifier.
+        role_info = self._request(
+            f"auth/approle/role/{runtime_role}/role-id",
+            token=bootstrap_token,
+        )
+        role_id = role_info["data"]["role_id"]
+
+        # Generate a short-lived, single-use SecretID.
+        issued = self._request(
+            f"auth/approle/role/{runtime_role}/secret-id",
+            payload={},
+            token=bootstrap_token,
+        )
+        secret = issued["data"]
+
+        if (
+            int(secret["secret_id_ttl"]) != 60
+            or int(secret["secret_id_num_uses"]) != 1
+        ):
+            raise VaultUnavailable("Unexpected SecretID limits")
+
+        # Consume SecretID to obtain the runtime token.
+        login = self._request(
+            "auth/approle/login",
+            payload={
+                "role_id": role_id,
+                "secret_id": secret["secret_id"],
+            },
         )
 
-        auth = response["auth"]
+        auth = login["auth"]
         ttl = int(auth["lease_duration"])
 
-        if ttl <= 0:
-            raise VaultUnavailable("Invalid Vault token TTL")
+        if ttl <= 0 or ttl > 60:
+            raise VaultUnavailable("Invalid runtime token TTL")
 
         self.token = auth["client_token"]
-        self.token_expires = time.monotonic() + max(1, ttl - 45)
+        self.token_expires = time.monotonic() + max(1, ttl - 10)
 
+        import logging
+        logging.getLogger("utravs.vault").info(
+            "vault_runtime_credential_rotated role=%s "
+            "secret_id_ttl=60s secret_id_uses=1 "
+            "runtime_token_ttl=%ss",
+            self.role,
+            ttl,
+        )
 
     def _transit(self, action, message, signature=None):
         if action not in ("sign", "verify"):

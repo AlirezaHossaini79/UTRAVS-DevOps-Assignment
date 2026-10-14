@@ -99,7 +99,7 @@ try:
             {
                 "bound_service_account_names": [name],
                 "bound_service_account_namespaces": ["messaging"],
-                "token_policies": [name],
+                "token_policies": [name, f"{name}-bootstrap"],
                 "token_ttl": "5m",
                 "token_max_ttl": "15m"
             }
