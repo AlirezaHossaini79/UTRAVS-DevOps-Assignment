@@ -1,0 +1,16 @@
+---
+- import_role:  # noqa name[missing]
+    name: cluster-dump
+
+- name: Check kubectl output
+  command: "{{ bin_dir }}/kubectl get nodes"
+  changed_when: false
+
+- name: Check that all nodes are running and ready
+  command: >
+    {{ bin_dir }}/kubectl get nodes -o jsonpath-as-json='{.items[*].status.conditions[?(@.type == "Ready")]}'
+  changed_when: false
+  register: nodes_ready_conditions
+  until: nodes_ready_conditions.stdout | from_json | selectattr('status', '!=', "True") == []
+  retries: 30
+  delay: 10

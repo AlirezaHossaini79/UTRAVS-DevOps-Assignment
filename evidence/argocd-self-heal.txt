@@ -1,0 +1,5 @@
+Mon Oct 12 02:28:30 PM UTC 2026
+NAME    SYNC STATUS   HEALTH STATUS
+kafka   Synced        Healthy
+{"prune":false,"selfHeal":true}
+3600000

@@ -1,0 +1,10 @@
+The consumer rebalance protocol (KIP-848) is production-ready! Set group.protocol=consumer to try it out. See https://kafka.apache.org/documentation/#consumer_rebalance_protocol
+FAILOVER-20261012T104229Z:booking-created
+FAILOVER-20261012T104229Z:payment-completed
+FAILOVER-20261012T104229Z:notification-sent
+booking-created-1001
+payment-completed-1001
+notification-requested-1001
+[2026-10-12 10:42:57,294] ERROR Error processing message, terminating consumer process:  (org.apache.kafka.tools.consumer.ConsoleConsumer)
+org.apache.kafka.common.errors.TimeoutException
+Processed a total of 6 messages

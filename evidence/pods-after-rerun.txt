@@ -1,0 +1,26 @@
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE     IP              NODE        NOMINATED NODE   READINESS GATES
+kube-system   calico-kube-controllers-84bbd545cc-ddjqm   1/1     Running   0          5h21m   10.233.107.1    worker-01   <none>           <none>
+kube-system   calico-node-bg7d9                          1/1     Running   0          5h21m   172.16.90.129   cp-01       <none>           <none>
+kube-system   calico-node-d4d42                          1/1     Running   0          5h21m   172.16.90.131   cp-03       <none>           <none>
+kube-system   calico-node-jwxcn                          1/1     Running   0          5h21m   172.16.90.132   worker-01   <none>           <none>
+kube-system   calico-node-znlws                          1/1     Running   0          5h21m   172.16.90.130   cp-02       <none>           <none>
+kube-system   coredns-5779cf998f-h4nln                   1/1     Running   0          5h21m   10.233.107.2    worker-01   <none>           <none>
+kube-system   coredns-5779cf998f-jkvv6                   1/1     Running   0          5h21m   10.233.106.65   cp-01       <none>           <none>
+kube-system   dns-autoscaler-69d545db85-5blpk            1/1     Running   0          5h21m   10.233.107.3    worker-01   <none>           <none>
+kube-system   kube-apiserver-cp-01                       1/1     Running   0          5h23m   172.16.90.129   cp-01       <none>           <none>
+kube-system   kube-apiserver-cp-02                       1/1     Running   0          5h23m   172.16.90.130   cp-02       <none>           <none>
+kube-system   kube-apiserver-cp-03                       1/1     Running   0          5h22m   172.16.90.131   cp-03       <none>           <none>
+kube-system   kube-controller-manager-cp-01              1/1     Running   0          5h23m   172.16.90.129   cp-01       <none>           <none>
+kube-system   kube-controller-manager-cp-02              1/1     Running   0          5h23m   172.16.90.130   cp-02       <none>           <none>
+kube-system   kube-controller-manager-cp-03              1/1     Running   0          5h22m   172.16.90.131   cp-03       <none>           <none>
+kube-system   kube-proxy-5l8hz                           1/1     Running   0          5h22m   172.16.90.132   worker-01   <none>           <none>
+kube-system   kube-proxy-7jcmv                           1/1     Running   0          5h23m   172.16.90.129   cp-01       <none>           <none>
+kube-system   kube-proxy-k567t                           1/1     Running   0          5h23m   172.16.90.131   cp-03       <none>           <none>
+kube-system   kube-proxy-wzwhp                           1/1     Running   0          5h23m   172.16.90.130   cp-02       <none>           <none>
+kube-system   kube-scheduler-cp-01                       1/1     Running   0          5h23m   172.16.90.129   cp-01       <none>           <none>
+kube-system   kube-scheduler-cp-02                       1/1     Running   0          5h23m   172.16.90.130   cp-02       <none>           <none>
+kube-system   kube-scheduler-cp-03                       1/1     Running   0          5h22m   172.16.90.131   cp-03       <none>           <none>
+kube-system   nodelocaldns-h79p9                         1/1     Running   0          5h21m   172.16.90.131   cp-03       <none>           <none>
+kube-system   nodelocaldns-rtlk2                         1/1     Running   0          5h21m   172.16.90.132   worker-01   <none>           <none>
+kube-system   nodelocaldns-xltc2                         1/1     Running   0          5h21m   172.16.90.129   cp-01       <none>           <none>
+kube-system   nodelocaldns-z9drz                         1/1     Running   0          5h21m   172.16.90.130   cp-02       <none>           <none>

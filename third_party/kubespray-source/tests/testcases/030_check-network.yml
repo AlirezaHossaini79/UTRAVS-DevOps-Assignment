@@ -1,0 +1,15 @@
+---
+- name: Run the hydrophone checks
+  vars:
+    networking_check: "\\[sig-network\\] Networking Granular Checks.+\\[Conformance\\]"
+  block:
+  - name: Run the networking granular checks
+    command: "{{ hydrophone_path }} --focus=\"{{ networking_check }}\" --parallel {{ hydrophone_parallel }}"
+  rescue:
+  - name: List pods cluster-wide
+    command: "{{ bin_dir }}/kubectl get pods --all-namespaces -owide"
+    changed_when: false
+
+  - import_role:  # noqa name[missing]
+      name: cluster-dump
+  - fail: # noqa name[missing]

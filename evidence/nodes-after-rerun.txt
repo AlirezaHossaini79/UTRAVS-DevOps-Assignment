@@ -1,0 +1,5 @@
+NAME        STATUS   ROLES           AGE     VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION             CONTAINER-RUNTIME
+cp-01       Ready    control-plane   5h23m   v1.36.4   172.16.90.129   <none>        Ubuntu 26.04.1 LTS   7.0.0-31-generic (amd64)   containerd://2.3.5
+cp-02       Ready    control-plane   5h23m   v1.36.4   172.16.90.130   <none>        Ubuntu 26.04.1 LTS   7.0.0-31-generic (amd64)   containerd://2.3.5
+cp-03       Ready    control-plane   5h23m   v1.36.4   172.16.90.131   <none>        Ubuntu 26.04.1 LTS   7.0.0-31-generic (amd64)   containerd://2.3.5
+worker-01   Ready    <none>          5h22m   v1.36.4   172.16.90.132   <none>        Ubuntu 26.04.1 LTS   7.0.0-31-generic (amd64)   containerd://2.3.5

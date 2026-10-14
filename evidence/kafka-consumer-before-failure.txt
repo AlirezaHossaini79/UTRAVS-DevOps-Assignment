@@ -1,0 +1,3 @@
+booking-created-1001
+payment-completed-1001
+notification-requested-1001

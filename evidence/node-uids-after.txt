@@ -1,0 +1,5 @@
+NAME        UID
+cp-01       87c93185-4215-40eb-9f14-f31031df473f
+cp-02       8cf69a82-405e-45d8-9bb4-9305ef4c4203
+cp-03       7f5ee0fe-b00e-41c3-98ad-7a4acd4e42f3
+worker-01   f42bef47-3784-4a47-987a-b6d55e0ccf35

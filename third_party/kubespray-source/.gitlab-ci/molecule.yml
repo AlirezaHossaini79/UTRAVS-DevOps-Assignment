@@ -1,0 +1,51 @@
+---
+molecule:
+  tags: [ffci]
+  rules: # run on ci-short as well
+  - if: $CI_COMMIT_BRANCH =~ /^pr-.*$/
+    when: on_success
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_PIPELINE_SCHEDULE_DESCRIPTION == "daily-ci"
+    when: on_success
+  - when: manual
+    allow_failure: true
+  stage: deploy-part1
+  image: $PIPELINE_IMAGE
+  needs:
+  - pipeline-image
+  script:
+  - cd roles/$ROLE
+  - molecule test --all -- --extra-vars @${CI_PROJECT_DIR}/tests/common_vars.yml
+  after_script:
+  - rm -fr molecule_logs
+  - mkdir -p molecule_logs
+  - find ~/.cache/molecule/ \( -name '*.out' -o -name '*.err' \) -type f | xargs tar -uf molecule_logs/molecule.tar
+  - gzip molecule_logs/molecule.tar
+  artifacts:
+    when: always
+    paths:
+    - molecule_logs/
+  parallel:
+    matrix:
+    - ROLE:
+      - container-engine/cri-dockerd
+      - container-engine/containerd
+      - container-engine/cri-o
+      - container-engine/gvisor
+      - container-engine/kata-containers
+      - adduser
+      - bastion-ssh-config
+      - bootstrap_os
+
+molecule_full:
+  allow_failure: true
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_PIPELINE_SCHEDULE_DESCRIPTION == "daily-ci"
+    when: on_success
+  - when: manual
+    allow_failure: true
+  extends: molecule
+  parallel:
+    matrix:
+    - ROLE:
+      # FIXME: until youki release 0.6.1
+      - container-engine/youki
