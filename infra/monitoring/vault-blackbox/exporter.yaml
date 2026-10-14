@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utravs-vault-blackbox
+  namespace: monitoring
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: utravs-vault-blackbox
+  template:
+    metadata:
+      labels:
+        app: utravs-vault-blackbox
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: blackbox
+          image: quay.io/prometheus/blackbox-exporter:v0.27.0
+          args:
+            - --config.file=/etc/blackbox/blackbox.yml
+          ports:
+            - name: http
+              containerPort: 9115
+          resources:
+            requests:
+              cpu: 25m
+              memory: 48Mi
+            limits:
+              cpu: 150m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /etc/blackbox
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: utravs-vault-blackbox-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: utravs-vault-blackbox
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  selector:
+    app: utravs-vault-blackbox
+  ports:
+    - name: http
+      port: 9115
+      targetPort: http

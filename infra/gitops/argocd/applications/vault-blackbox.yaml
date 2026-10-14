@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault-blackbox
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
+    targetRevision: main
+    path: infra/monitoring/vault-blackbox
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
