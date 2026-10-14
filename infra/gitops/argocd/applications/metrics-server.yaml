@@ -12,6 +12,9 @@ spec:
     helm:
       releaseName: metrics-server
       valuesObject:
+        image:
+          repository: k8s-mirror.liara.ir/metrics-server/metrics-server
+          tag: v0.9.0
         replicas: 1
         resources:
           requests:
