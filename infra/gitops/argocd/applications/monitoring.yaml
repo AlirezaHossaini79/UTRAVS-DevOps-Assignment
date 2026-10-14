@@ -15,6 +15,21 @@ spec:
       releaseName: monitoring
       valuesObject:
         additionalPrometheusRulesMap:
+          utravs-istio:
+            groups:
+            - name: utravs.istio
+              rules:
+              - alert: IstioMeshDegradation
+                expr: (count(up{job=~"istiod|utravs-messaging-istio"} == 0) > 0) or absent(up{job="istiod"})
+                  or absent(up{job="utravs-messaging-istio"}) or (sum(increase(istio_tcp_connections_closed_total{job="utravs-messaging-istio",response_flags!="-",response_flags!=""}[5m]))
+                  > 5)
+                for: 2m
+                labels:
+                  severity: warning
+                  component: istio
+                annotations:
+                  summary: Istio mesh degradation detected
+                  description: Istio telemetry target unavailable or elevated failed TCP connections.
           utravs-consumer-lag:
             groups:
             - name: utravs.messaging
