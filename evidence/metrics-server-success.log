@@ -1,0 +1,17 @@
+Wed Oct 14 11:48:12 AM UTC 2026
+NAME             SYNC STATUS   HEALTH STATUS
+metrics-server   Synced        Healthy
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+metrics-server   1/1     1            1           22m
+NAME                     SERVICE                      AVAILABLE   AGE
+v1beta1.metrics.k8s.io   kube-system/metrics-server   True        22m
+NAME        CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+cp-01       774m         22%      4549Mi          69%         
+cp-02       778m         22%      4376Mi          67%         
+cp-03       719m         21%      3595Mi          55%         
+worker-01   470m         13%      2876Mi          44%         
+NAME                               CPU(cores)   MEMORY(bytes)   
+utravs-consumer-6dd5b5bfbc-kwj4m   11m          50Mi            
+utravs-consumer-6dd5b5bfbc-qghz9   12m          86Mi            
+utravs-producer-78f9d48f76-5w5wk   10m          67Mi            
+utravs-producer-78f9d48f76-9bqxf   10m          71Mi            
