@@ -25,6 +25,9 @@ spec:
         app: utravs-{{ $name }}
       annotations:
         sidecar.istio.io/inject: "true"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: {{ $cfg.port | quote }}
 
     spec:
       serviceAccountName: utravs-{{ $name }}
