@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jaeger
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://jaegertracing.github.io/helm-charts
+    chart: jaeger
+    targetRevision: 4.16.0
+
+    helm:
+      releaseName: jaeger
+      valuesObject:
+        jaeger:
+          enabled: true
+          replicas: 1
+
+          image:
+            repository: jaegertracing/jaeger
+            tag: "2.22.0"
+            pullPolicy: IfNotPresent
+
+          serviceAccount:
+            automountServiceAccountToken: false
+
+          ingress:
+            enabled: false
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tracing
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
