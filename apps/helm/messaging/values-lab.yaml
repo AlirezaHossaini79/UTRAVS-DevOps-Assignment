@@ -9,9 +9,9 @@ imagePullSecrets:
 producer:
   replicaCount: 2
   image:
-    tag: "sha-063c8ca1dbb1f5064bb087943398170764157bdc"
+    tag: "sha-697c83017f3bd044857cbeaf6ee9212699056c2e"
 
 consumer:
   replicaCount: 2
   image:
-    tag: "sha-063c8ca1dbb1f5064bb087943398170764157bdc"
+    tag: "sha-697c83017f3bd044857cbeaf6ee9212699056c2e"
