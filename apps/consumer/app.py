@@ -8,6 +8,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Event, Thread
 
 from confluent_kafka import Consumer, KafkaException, Producer
+from opentelemetry.trace import SpanKind
+from otel_tracing import setup_tracing, extract_kafka_context
 from vault_client import VaultClient
 from prometheus_client import (
     Counter,
@@ -21,6 +23,7 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
 )
 logger = logging.getLogger("utravs-consumer")
+tracer = setup_tracing("utravs-consumer")
 
 BOOTSTRAP = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",
@@ -310,36 +313,46 @@ def main():
                     errors_total.inc()
                     continue
 
-                try:
+                with tracer.start_as_current_span(
+                    "kafka.consume",
+                    context=extract_kafka_context(msg.headers()),
+                    kind=SpanKind.CONSUMER,
+                ) as span:
+                    span.set_attribute("messaging.system", "kafka")
+                    span.set_attribute("messaging.destination.name", msg.topic())
+                    span.set_attribute("messaging.kafka.partition", msg.partition())
+                    span.set_attribute("messaging.kafka.offset", msg.offset())
+
                     try:
-                        verify_event_signature(msg, vault_client)
-                        process_message(msg)
-                        valid = True
+                        try:
+                            verify_event_signature(msg, vault_client)
+                            process_message(msg)
+                            valid = True
 
-                    except (ValueError, TypeError, KeyError, UnicodeError) as exc:
-                        logger.warning(
-                            "Invalid event: %s; routing to DLQ", exc
+                        except (ValueError, TypeError, KeyError, UnicodeError) as exc:
+                            logger.warning(
+                                "Invalid event: %s; routing to DLQ", exc
+                            )
+                            send_to_dlq(dlq_producer, msg, exc)
+                            valid = False
+
+                        # Commit only after processing or confirmed DLQ delivery.
+                        consumer.commit(
+                            message=msg,
+                            asynchronous=False,
                         )
-                        send_to_dlq(dlq_producer, msg, exc)
-                        valid = False
 
-                    # Commit only after processing or confirmed DLQ delivery.
-                    consumer.commit(
-                        message=msg,
-                        asynchronous=False,
-                    )
+                        if valid:
+                            processed_total.inc()
+                        else:
+                            dlq_total.inc()
 
-                    if valid:
-                        processed_total.inc()
-                    else:
-                        dlq_total.inc()
-
-                except Exception:
-                    errors_total.inc()
-                    logger.exception(
-                        "Processing, DLQ delivery or commit failed"
-                    )
-                    raise
+                    except Exception:
+                        errors_total.inc()
+                        logger.exception(
+                            "Processing, DLQ delivery or commit failed"
+                        )
+                        raise
 
             if time.monotonic() - last_lag_check >= 5:
                 try:

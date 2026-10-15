@@ -11,10 +11,13 @@ from confluent_kafka import Producer
 from vault_client import VaultClient, VaultUnavailable
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
+from opentelemetry.trace import SpanKind
+from otel_tracing import setup_tracing, inject_kafka_headers
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("utravs-producer")
+tracer = setup_tracing("utravs-producer")
 
 KAFKA_BOOTSTRAP = os.getenv(
     "KAFKA_BOOTSTRAP_SERVERS",
@@ -123,6 +126,17 @@ def metrics():
 
 @app.post("/events", status_code=201)
 def publish_event(request: EventRequest):
+    with tracer.start_as_current_span(
+        "kafka.produce", kind=SpanKind.PRODUCER
+    ) as span:
+        span.set_attribute("messaging.system", "kafka")
+        span.set_attribute("messaging.destination.name", KAFKA_TOPIC)
+        result = _publish_event(request)
+        span.set_attribute("utravs.event_id", result["event_id"])
+        return result
+
+
+def _publish_event(request: EventRequest):
     event_id = str(request.event_id or uuid4())
 
     message = {
@@ -165,7 +179,8 @@ def publish_event(request: EventRequest):
                 key=request.booking_id.encode("utf-8"),
                 value=payload_bytes,
                 headers=[
-                    ("utravs-signature", signature.encode("ascii"))
+                    ("utravs-signature", signature.encode("ascii")),
+                    *inject_kafka_headers()
                 ],
                 callback=delivery_callback,
             )

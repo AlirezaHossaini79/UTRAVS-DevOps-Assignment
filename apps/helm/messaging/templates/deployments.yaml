@@ -72,6 +72,8 @@ spec:
             - name: KAFKA_SSL_KEY_LOCATION
               value: {{ $.Values.kafka.clientAuth.keyLocation | quote }}
             {{- end }}
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ $.Values.tracing.otlpEndpoint | quote }}
             - name: KAFKA_TOPIC
               value: {{ $.Values.kafka.topic | quote }}
             {{- if eq $name "consumer" }}

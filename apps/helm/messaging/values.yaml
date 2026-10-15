@@ -43,3 +43,6 @@ consumer:
     limits:
       cpu: 500m
       memory: 384Mi
+
+tracing:
+  otlpEndpoint: http://jaeger.tracing.svc.cluster.local:4318/v1/traces
