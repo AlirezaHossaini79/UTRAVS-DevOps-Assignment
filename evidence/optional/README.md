@@ -39,3 +39,12 @@ mTLS configuration. Producer remains on its previously validated image.
 
 [preflight.json](preflight.json) records syntax, unit, Helm, Prometheus and API
 dry-run checks. Credentials and private keys are not included in these records.
+
+## Interactive Grafana login verification
+
+The initial 500m CPU/384Mi limits passed API smoke tests but saturated during
+interactive login, with internal API timeouts and readiness failures. Commit
+`15b5d05` raises requests to 250m/512Mi and limits to 1 CPU/1Gi through GitOps.
+The [session-login record](grafana-login.json) verifies HTTP 200 for session login,
+the authenticated dashboard HTML, frontend assets, merged preferences and all
+eight Prometheus queries through Grafana. No password, cookie or token is recorded.

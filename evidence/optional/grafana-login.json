@@ -1,0 +1,134 @@
+{
+  "timestamp_utc": "2026-10-16T17:40:20.476977+00:00",
+  "resources": {
+    "limits": {
+      "cpu": "1",
+      "memory": "1Gi"
+    },
+    "requests": {
+      "cpu": "250m",
+      "memory": "512Mi"
+    }
+  },
+  "checks": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "seconds": 0.012,
+      "bytes": 101
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "seconds": 0.014,
+      "bytes": 62439
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "seconds": 0.031,
+      "bytes": 41
+    },
+    {
+      "path": "/api/user",
+      "status": 200,
+      "seconds": 0.022,
+      "bytes": 432
+    },
+    {
+      "path": "/d/utravs-message-slo",
+      "status": 200,
+      "seconds": 0.023,
+      "bytes": 82309
+    },
+    {
+      "path": "/public/build/grafana.app.e3d0bb45757bd985dc70.css",
+      "status": 200,
+      "seconds": 0.019,
+      "bytes": 41791
+    },
+    {
+      "path": "/public/build/grafana.dark.2ecc710216772a806751.css",
+      "status": 200,
+      "seconds": 0.015,
+      "bytes": 60330
+    },
+    {
+      "path": "/public/build/runtime.10d657f2ef7f26b6080b.js",
+      "status": 200,
+      "seconds": 0.015,
+      "bytes": 54939
+    },
+    {
+      "path": "/apis/preferences.grafana.app/v1/namespaces/default/preferences/merged",
+      "status": 200,
+      "seconds": 0.017,
+      "bytes": 229
+    },
+    {
+      "path": "/api/dashboards/uid/utravs-message-slo",
+      "status": 200,
+      "seconds": 0.045,
+      "bytes": 5413
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=100+%2A+utravs%3Amessage_latency_sli%3Aratio24h",
+      "status": 200,
+      "seconds": 0.044,
+      "bytes": 107
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=100+%2A+utravs%3Amessage_latency_slo%3Atarget",
+      "status": 200,
+      "seconds": 0.023,
+      "bytes": 106
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=sum%28increase%28utravs_message_end_to_end_seconds_count%7Bjob%3D%22utravs-messaging-istio%22%7D%5B24h%5D%29%29",
+      "status": 200,
+      "seconds": 0.022,
+      "bytes": 121
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=sum%28increase%28utravs_consumer_latency_timestamp_errors_total%7Bjob%3D%22utravs-messaging-istio%22%7D%5B24h%5D%29%29",
+      "status": 200,
+      "seconds": 0.031,
+      "bytes": 105
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=histogram_quantile%280.95%2C+sum+by+%28le%29+%28rate%28utravs_message_end_to_end_seconds_bucket%7Bjob%3D%22utravs-messaging-istio%22%7D%5B5m%5D%29%29%29",
+      "status": 200,
+      "seconds": 0.04,
+      "bytes": 107
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=sum%28max+by+%28topic%2C+partition%29+%28utravs_consumer_lag%7Bjob%3D%22utravs-messaging-istio%22%2Ctopic%3D%22utravs-events%22%7D%29%29",
+      "status": 200,
+      "seconds": 0.031,
+      "bytes": 105
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=100+%2A+sum%28rate%28utravs_producer_events_total%7Bjob%3D%22utravs-messaging-istio%22%2Cresult%3D%22success%22%7D%5B5m%5D%29%29+%2F+sum%28rate%28utravs_producer_events_total%7Bjob%3D%22utravs-messaging-istio%22%7D%5B5m%5D%29%29",
+      "status": 200,
+      "seconds": 0.028,
+      "bytes": 107
+    },
+    {
+      "path": "/api/datasources/proxy/uid/prometheus/api/v1/query?query=sum%28increase%28utravs_consumer_errors_total%7Bjob%3D%22utravs-messaging-istio%22%7D%5B24h%5D%29%29+%2B+sum%28increase%28utravs_consumer_dlq_total%7Bjob%3D%22utravs-messaging-istio%22%7D%5B24h%5D%29%29",
+      "status": 200,
+      "seconds": 0.028,
+      "bytes": 105
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "seconds": 0.011,
+      "bytes": 101
+    }
+  ],
+  "authenticated_username": "utravs-admin",
+  "dashboard_panels": 8,
+  "session_login_verified": true,
+  "frontend_assets_verified": 3,
+  "configuration_commit": "15b5d05badda5bff947f6acd9130dcc4f7628989"
+}
