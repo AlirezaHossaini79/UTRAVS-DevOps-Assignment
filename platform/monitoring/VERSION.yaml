@@ -1,0 +1,41 @@
+name: kube-prometheus-stack
+version: 91.5.0
+appVersion: v0.94.0
+releaseName: monitoring
+namespace: monitoring
+manager: argocd
+dependencies:
+- condition: crds.enabled
+  name: crds
+  repository: ''
+  version: 0.0.0
+- condition: kubeStateMetrics.enabled
+  name: kube-state-metrics
+  repository: oci://ghcr.io/prometheus-community/charts
+  version: 8.5.0
+- condition: nodeExporter.enabled
+  name: prometheus-node-exporter
+  repository: oci://ghcr.io/prometheus-community/charts
+  version: 4.57.0
+- condition: grafana.enabled
+  name: grafana
+  repository: oci://ghcr.io/grafana-community/helm-charts
+  version: 13.2.5
+- condition: windowsMonitoring.enabled
+  name: prometheus-windows-exporter
+  repository: oci://ghcr.io/prometheus-community/charts
+  version: 0.12.*
+download_origin: https://prometheus-community.github.io/helm-charts
+package: packages/kube-prometheus-stack-91.5.0.tgz
+package_sha256: f84b17d887ef6d1b76939fb3a1ee348f442598c94e471545488cab94a7f547e4
+dependency_versions:
+- name: prometheus-node-exporter
+  version: 4.57.0
+- name: kube-state-metrics
+  version: 8.5.0
+- name: crds
+  version: 0.0.0
+- name: prometheus-windows-exporter
+  version: 0.12.8
+- name: grafana
+  version: 13.2.5

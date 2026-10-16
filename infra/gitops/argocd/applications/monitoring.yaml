@@ -4,239 +4,25 @@ metadata:
   name: monitoring
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 91.5.0
+    repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
+    targetRevision: main
     helm:
       releaseName: monitoring
-      valuesObject:
-        additionalPrometheusRulesMap:
-          utravs-istio:
-            groups:
-            - name: utravs.istio
-              rules:
-              - alert: IstioMeshDegradation
-                expr: (count(up{job=~"istiod|utravs-messaging-istio"} == 0) > 0) or absent(up{job="istiod"})
-                  or absent(up{job="utravs-messaging-istio"}) or (sum(increase(istio_tcp_connections_closed_total{job="utravs-messaging-istio",response_flags!="-",response_flags!=""}[5m]))
-                  > 5)
-                for: 2m
-                labels:
-                  severity: warning
-                  component: istio
-                annotations:
-                  summary: Istio mesh degradation detected
-                  description: Istio telemetry target unavailable or elevated failed TCP connections.
-          utravs-consumer-lag:
-            groups:
-            - name: utravs.messaging
-              rules:
-              - alert: KafkaConsumerLagHigh
-                expr: sum(max by (topic, partition) (utravs_consumer_lag{job="utravs-messaging-istio",topic="utravs-events"}))
-                  > 100
-                for: 2m
-                labels:
-                  severity: warning
-                  component: kafka
-                annotations:
-                  summary: UTRAVS consumer lag is high
-                  description: Consumer lag across unique partitions exceeded 100 for 2 minutes.
-
-        grafana:
-          enabled: false
-
-        defaultRules:
-          create: false
-
-        kubeApiServer:
-          enabled: true
-        kubelet:
-          enabled: true
-        kubeControllerManager:
-          enabled: false
-        kubeScheduler:
-          enabled: false
-        kubeEtcd:
-          enabled: false
-        kubeProxy:
-          enabled: false
-
-        prometheusOperator:
-          admissionWebhooks:
-            enabled: false
-          tls:
-            enabled: false
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-
-        kube-state-metrics:
-          image:
-            registry: k8s-mirror.liara.ir
-            repository: kube-state-metrics/kube-state-metrics
-            tag: v2.20.0
-          resources:
-            requests:
-              cpu: 50m
-              memory: 96Mi
-            limits:
-              cpu: 300m
-              memory: 256Mi
-
-        prometheus-node-exporter:
-          resources:
-            requests:
-              cpu: 20m
-              memory: 32Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
-
-        prometheus:
-          enabled: true
-          additionalServiceMonitors:
-            - name: utravs-istiod
-              namespaceSelector:
-                matchNames:
-                  - istio-system
-              selector:
-                matchLabels:
-                  app: istiod
-              endpoints:
-                - port: http-monitoring
-                  path: /metrics
-                  interval: 30s
-          prometheusSpec:
-            replicas: 1
-            retention: 3d
-            retentionSize: 3GB
-            serviceMonitorSelectorNilUsesHelmValues: false
-            serviceMonitorSelector: {}
-            serviceMonitorNamespaceSelector: {}
-            podMonitorSelectorNilUsesHelmValues: false
-            podMonitorSelector: {}
-            podMonitorNamespaceSelector: {}
-            ruleSelectorNilUsesHelmValues: false
-            ruleSelector: {}
-            ruleNamespaceSelector: {}
-            additionalScrapeConfigs:
-              - job_name: utravs-vault-health
-                scrape_interval: 30s
-                scrape_timeout: 10s
-                metrics_path: /probe
-                params:
-                  module:
-                  - vault_health
-                static_configs:
-                - targets:
-                  - https://vault-0.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
-                  - https://vault-1.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
-                  - https://vault-2.vault-internal.vault.svc.cluster.local:8200/v1/sys/health?standbyok=true
-                relabel_configs:
-                - source_labels:
-                  - __address__
-                  target_label: __param_target
-                - source_labels:
-                  - __param_target
-                  target_label: instance
-                - source_labels:
-                  - __param_target
-                  regex: https://(vault-[0-2])\.vault-internal\.vault\.svc\.cluster\.local:8200/.*
-                  target_label: vault_node
-                  replacement: $1
-                - target_label: __address__
-                  replacement: utravs-vault-blackbox.monitoring.svc.cluster.local:9115
-              - job_name: utravs-messaging-istio
-                scrape_interval: 30s
-                metrics_path: /stats/prometheus
-                scheme: http
-                kubernetes_sd_configs:
-                  - role: pod
-                    namespaces:
-                      names:
-                        - messaging
-                relabel_configs:
-                  - action: keep
-                    source_labels:
-                      - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-                    regex: "true"
-                  - action: keep
-                    source_labels:
-                      - __meta_kubernetes_pod_phase
-                    regex: Running
-                  - action: keep
-                    source_labels:
-                      - __meta_kubernetes_pod_container_name
-                    regex: "producer|consumer"
-                  - action: replace
-                    source_labels:
-                      - __meta_kubernetes_pod_ip
-                    regex: (.+)
-                    target_label: __address__
-                    replacement: "$1:15020"
-                  - action: replace
-                    source_labels:
-                      - __meta_kubernetes_pod_name
-                    target_label: pod
-                  - action: replace
-                    source_labels:
-                      - __meta_kubernetes_namespace
-                    target_label: namespace
-            resources:
-              requests:
-                cpu: 200m
-                memory: 512Mi
-              limits:
-                cpu: "1"
-                memory: 1536Mi
-            storageSpec:
-              volumeClaimTemplate:
-                spec:
-                  storageClassName: local-path
-                  accessModes:
-                    - ReadWriteOnce
-                  resources:
-                    requests:
-                      storage: 5Gi
-
-        alertmanager:
-          enabled: true
-          alertmanagerSpec:
-            replicas: 1
-            retention: 48h
-            resources:
-              requests:
-                cpu: 50m
-                memory: 64Mi
-              limits:
-                cpu: 300m
-                memory: 256Mi
-            storage:
-              volumeClaimTemplate:
-                spec:
-                  storageClassName: local-path
-                  accessModes:
-                    - ReadWriteOnce
-                  resources:
-                    requests:
-                      storage: 1Gi
-
+      valueFiles:
+      - ../values.yaml
+    path: platform/monitoring/chart
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
-
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-      - SkipDryRunOnMissingResource=true
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - SkipDryRunOnMissingResource=true

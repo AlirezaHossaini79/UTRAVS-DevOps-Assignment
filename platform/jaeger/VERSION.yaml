@@ -1,0 +1,16 @@
+name: jaeger
+version: 4.16.0
+appVersion: 2.22.0
+releaseName: jaeger
+namespace: tracing
+manager: argocd
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  version: 2.x.x
+download_origin: https://jaegertracing.github.io/helm-charts
+package: packages/jaeger-4.16.0.tgz
+package_sha256: 7e040777db357b594eb31bf5e25947ed9f7848dc30955ab1563e428b3a7b6dd8
+dependency_versions:
+- name: common
+  version: 2.36.0

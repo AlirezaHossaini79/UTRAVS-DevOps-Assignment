@@ -1,0 +1,96 @@
+{
+  "checked_at_utc": "2026-10-16T10:08:02.280639+00:00",
+  "reviewed_git_tree": "19a98abf786e29c22dfa00444da36a5eaa5bb860",
+  "fresh_git_export_checks_passed": true,
+  "files_in_git": 2126,
+  "charts": [
+    "argocd",
+    "istio-base",
+    "istiod",
+    "jaeger",
+    "messaging",
+    "metrics-server",
+    "monitoring",
+    "strimzi",
+    "vault"
+  ],
+  "chart_packages_present": true,
+  "private_files_excluded": true,
+  "ssh_python_preflight": [
+    {
+      "inventory": "cluster/kubespray/inventory-utravs/inventory.ini",
+      "ssh_python_ping_passed": true,
+      "successful_hosts": 4
+    },
+    {
+      "inventory": "cluster/loadbalancers/inventory.ini",
+      "ssh_python_ping_passed": true,
+      "successful_hosts": 2
+    }
+  ],
+  "application_resource_equivalence": [
+    {
+      "application": "istio-base",
+      "resources": 17,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "istiod",
+      "resources": 17,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "jaeger",
+      "resources": 3,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "kafka",
+      "resources": 9,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "messaging",
+      "resources": 9,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "metrics-server",
+      "resources": 9,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "monitoring",
+      "resources": 46,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "vault",
+      "resources": 12,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    },
+    {
+      "application": "vault-blackbox",
+      "resources": 4,
+      "changed_resources": [],
+      "added_resources": [],
+      "removed_resources": []
+    }
+  ]
+}

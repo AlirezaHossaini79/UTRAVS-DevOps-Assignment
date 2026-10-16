@@ -1,0 +1,17 @@
+name: argo-cd
+version: 10.10.2
+appVersion: v3.5.4
+releaseName: argocd
+namespace: argocd
+manager: helm
+dependencies:
+- condition: redis-ha.enabled
+  name: redis-ha
+  repository: https://dandydeveloper.github.io/charts/
+  version: 4.38.0
+download_origin: https://argoproj.github.io/argo-helm
+package: packages/argo-cd-10.10.2.tgz
+package_sha256: 1f2bdb0e23b87fdac5222d99d1acf6964e670db9bf63912c58ab4677e505638b
+dependency_versions:
+- name: redis-ha
+  version: 4.38.0

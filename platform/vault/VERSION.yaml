@@ -1,0 +1,13 @@
+name: vault
+version: 0.34.1
+appVersion: 2.0.4
+releaseName: vault
+namespace: vault
+manager: argocd
+dependencies: []
+download_origin: https://github.com/hashicorp/vault-helm.git
+source_tag: v0.34.1
+source_commit: aa1c92e4adddbce9660e536dfe5222a88eda6d52
+package: packages/vault-0.34.1.tgz
+package_sha256: 6d6dd4a163f90bb993c503df0d03c2be14aa05b167651f7395ff760138979ef3
+dependency_versions: []

@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
     targetRevision: main
-    path: infra/monitoring/vault-blackbox
+    path: platform/vault-blackbox/manifests
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

@@ -1,0 +1,27 @@
+=== Final Vault Status ===
+===== vault-0 =====
+Sealed                  false
+HA Cluster              https://vault-1.vault-internal:8201
+HA Mode                 standby
+Active Node Address     https://10.233.106.76:8200
+Raft Committed Index    6105
+Raft Applied Index      6105
+===== vault-1 =====
+Sealed                  false
+HA Cluster              https://vault-1.vault-internal:8201
+HA Mode                 active
+Raft Committed Index    6105
+Raft Applied Index      6105
+===== vault-2 =====
+Sealed                  false
+HA Cluster              https://vault-1.vault-internal:8201
+HA Mode                 standby
+Active Node Address     https://10.233.106.76:8200
+Raft Committed Index    6105
+Raft Applied Index      6105
+=== StatefulSet ===
+NAME    READY   AGE
+vault   3/3     43h
+=== Active Endpoint ===
+NAME                 ADDRESSTYPE   PORTS       ENDPOINTS       AGE
+vault-active-lr57x   IPv4          8201,8200   10.233.106.76   43h

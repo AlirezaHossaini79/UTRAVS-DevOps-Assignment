@@ -1,0 +1,11 @@
+name: metrics-server
+version: 3.14.0
+appVersion: 0.9.0
+releaseName: metrics-server
+namespace: kube-system
+manager: argocd
+dependencies: []
+download_origin: https://kubernetes-sigs.github.io/metrics-server/
+package: packages/metrics-server-3.14.0.tgz
+package_sha256: c2ca1185c01e6e7f53dd1b7d131f0c9b3fa50e003ed068b784563a1b5a3422a1
+dependency_versions: []

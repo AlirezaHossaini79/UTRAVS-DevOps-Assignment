@@ -1,0 +1,11 @@
+name: strimzi-kafka-operator
+version: 1.2.0
+appVersion: 1.2.0
+releaseName: strimzi-kafka-operator
+namespace: strimzi
+manager: helm
+dependencies: []
+download_origin: oci://quay.io/strimzi-helm/strimzi-kafka-operator
+package: packages/strimzi-kafka-operator-1.2.0.tgz
+package_sha256: 0f8a50b2f19bd99482f9fd6e17cf42902f72f9e594a136813ac3f0b7af422efd
+dependency_versions: []

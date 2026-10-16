@@ -1,45 +1,30 @@
-# Python virtual environments
-.venv/
-__pycache__/
-*.pyc
-
-# Upstream Kubespray repository
-/kubespray/
-
-# Downloaded third-party Helm charts
-/infra/operators/strimzi/chart/
-/infra/gitops/argocd/chart/
-
-# Runtime logs and test evidence (review before publishing)
+# Operational state and secrets are stored outside the checkout.
+/.local/
+/.reorganization/
+/.venv/
 /logs/
-/evidence/
-
-# Archives
-*.tar.gz
-*.zip
-
-# Credentials and sensitive configuration
+/backups/
+/cluster/kubespray/inventory-utravs/credentials
+/cluster/kubespray/inventory-utravs/artifacts/
+__pycache__/
+*.py[cod]
 .env
 .env.*
 !.env.example
-*.pem
 *.key
+*.pem
 *.p12
 *.pfx
 *kubeconfig*
 admin.conf
 .ssh/
 .kube/
-
-# Terraform state
 .terraform/
 *.tfstate
 *.tfstate.*
-
-# Editor files
 .vscode/
 .idea/
 *.swp
-
-__pycache__/
-*.py[cod]
+# Required upstream templates contain references, not credentials.
+!/cluster/kubespray/source/roles/network_plugin/kube-router/templates/kubeconfig.yml.j2
+!/platform/monitoring/chart/charts/kube-state-metrics/templates/kubeconfig-secret.yaml

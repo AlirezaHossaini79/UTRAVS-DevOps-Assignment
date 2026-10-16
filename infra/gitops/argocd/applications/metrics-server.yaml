@@ -6,25 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://kubernetes-sigs.github.io/metrics-server/
-    chart: metrics-server
-    targetRevision: 3.14.0
+    repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
+    targetRevision: main
     helm:
       releaseName: metrics-server
-      valuesObject:
-        image:
-          repository: k8s-mirror.liara.ir/metrics-server/metrics-server
-          tag: v0.9.0
-        replicas: 1
-        args:
-          - --kubelet-insecure-tls
-        resources:
-          requests:
-            cpu: 100m
-            memory: 200Mi
-          limits:
-            cpu: 300m
-            memory: 384Mi
+      valueFiles:
+      - ../values.yaml
+    path: platform/metrics-server/chart
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
@@ -33,4 +21,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - ServerSideApply=true
+    - ServerSideApply=true

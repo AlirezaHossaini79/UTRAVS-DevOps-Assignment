@@ -1,0 +1,18 @@
+jaeger:
+  enabled: true
+  replicas: 1
+  image:
+    repository: jaegertracing/jaeger
+    tag: 2.22.0
+    pullPolicy: IfNotPresent
+  serviceAccount:
+    automountServiceAccountToken: false
+  ingress:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi

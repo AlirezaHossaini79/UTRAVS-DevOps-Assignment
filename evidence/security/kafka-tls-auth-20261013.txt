@@ -1,0 +1,16 @@
+Kafka TLS authentication — captured terminal results
+
+Recorded at (UTC): 2026-10-13T16:36:17.181000+00:00
+PASS: Existing TLS listener (9093) works
+PASS: New mTLS port (9094) is reachable
+PASS: mTLS listener rejects client without certificate
+
+Recorded at (UTC): 2026-10-13T16:52:47.317000+00:00
+PASS: Producer connected using mTLS
+PASS: Kafka accepted Producer certificate
+PASS: Kafka metadata retrieved on port 9094
+
+Recorded at (UTC): 2026-10-13T16:54:13.521000+00:00
+PASS: Consumer connected using mTLS
+PASS: Kafka accepted Consumer certificate
+PASS: Kafka metadata retrieved on port 9094

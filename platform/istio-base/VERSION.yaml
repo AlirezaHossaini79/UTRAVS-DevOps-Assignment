@@ -1,0 +1,11 @@
+name: base
+version: 1.31.1
+appVersion: 1.31.1
+releaseName: istio-base
+namespace: istio-system
+manager: argocd
+dependencies: []
+download_origin: https://blob.istio.io/istio-release/charts
+package: packages/base-1.31.1.tgz
+package_sha256: 6a5f3a628e31ea03994f5c8ff44804fcec54ac1b13893f1a3f3c26340c8f2015
+dependency_versions: []

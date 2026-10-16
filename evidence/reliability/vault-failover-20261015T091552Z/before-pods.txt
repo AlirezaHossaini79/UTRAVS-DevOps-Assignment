@@ -1,0 +1,4 @@
+NAME      READY   STATUS    RESTARTS   AGE   IP               NODE    NOMINATED NODE   READINESS GATES
+vault-0   1/1     Running   0          43h   10.233.105.12    cp-03   <none>           <none>
+vault-1   1/1     Running   0          43h   10.233.106.76    cp-01   <none>           <none>
+vault-2   1/1     Running   0          43h   10.233.102.206   cp-02   <none>           <none>

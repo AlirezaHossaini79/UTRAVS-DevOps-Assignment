@@ -1,0 +1,202 @@
+{
+  "checked_at_utc": "2026-10-16T09:33:45.399064+00:00",
+  "scope": "Static repository checks and read-only cluster state",
+  "charts": [
+    {
+      "service": "argocd",
+      "version": "10.10.2",
+      "package_sha256": "1f2bdb0e23b87fdac5222d99d1acf6964e670db9bf63912c58ab4677e505638b",
+      "rendered_resources": 62,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "istio-base",
+      "version": "1.31.1",
+      "package_sha256": "6a5f3a628e31ea03994f5c8ff44804fcec54ac1b13893f1a3f3c26340c8f2015",
+      "rendered_resources": 17,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "istiod",
+      "version": "1.31.1",
+      "package_sha256": "d49e3ac3100e9c24efbd3a7c26e8e6dd707431f8c06f203182ba54a2e8651a74",
+      "rendered_resources": 17,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "jaeger",
+      "version": "4.16.0",
+      "package_sha256": "7e040777db357b594eb31bf5e25947ed9f7848dc30955ab1563e428b3a7b6dd8",
+      "rendered_resources": 3,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "messaging",
+      "version": "0.1.0",
+      "package_sha256": "fa199d1ae1c589439af6dc7ded4d4aa3a04a60b67145baf30fafe6d52c843b0b",
+      "rendered_resources": 9,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "metrics-server",
+      "version": "3.14.0",
+      "package_sha256": "c2ca1185c01e6e7f53dd1b7d131f0c9b3fa50e003ed068b784563a1b5a3422a1",
+      "rendered_resources": 9,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "monitoring",
+      "version": "91.5.0",
+      "package_sha256": "f84b17d887ef6d1b76939fb3a1ee348f442598c94e471545488cab94a7f547e4",
+      "rendered_resources": 46,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "strimzi",
+      "version": "1.2.0",
+      "package_sha256": "0f8a50b2f19bd99482f9fd6e17cf42902f72f9e594a136813ac3f0b7af422efd",
+      "rendered_resources": 31,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    },
+    {
+      "service": "vault",
+      "version": "0.34.1",
+      "package_sha256": "6d6dd4a163f90bb993c503df0d03c2be14aa05b167651f7395ff760138979ef3",
+      "rendered_resources": 12,
+      "source_and_package_render_equal": true,
+      "helm_lint_passed": true
+    }
+  ],
+  "production_values_rendered": true,
+  "application_paths_valid": [
+    "istio-base",
+    "istiod",
+    "jaeger",
+    "kafka",
+    "messaging",
+    "metrics-server",
+    "monitoring",
+    "vault-blackbox",
+    "vault"
+  ],
+  "ansible_syntax_and_inventory_valid": true,
+  "failure_script_syntax_and_disabled_guard_valid": true,
+  "git_diff_check_passed": true,
+  "operational_credentials_outside_checkout": true,
+  "required_templates_and_evidence_available_to_git": true,
+  "trace": {
+    "trace_id": "b05f49b3b8a7b2e61e356817edeb1c11",
+    "parentage_valid": true,
+    "producer_start_to_consumer_end_ms": 114.31897
+  },
+  "nodes": [
+    {
+      "name": "cp-01",
+      "version": "v1.36.4",
+      "ready": true
+    },
+    {
+      "name": "cp-02",
+      "version": "v1.36.4",
+      "ready": true
+    },
+    {
+      "name": "cp-03",
+      "version": "v1.36.4",
+      "ready": true
+    },
+    {
+      "name": "worker-01",
+      "version": "v1.36.4",
+      "ready": true
+    }
+  ],
+  "live_applications": [
+    {
+      "name": "istio-base",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "istiod",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "jaeger",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "kafka",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "messaging",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "metrics-server",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "monitoring",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "platform-root",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "vault",
+      "sync": "Synced",
+      "health": "Healthy"
+    },
+    {
+      "name": "vault-blackbox",
+      "sync": "Synced",
+      "health": "Healthy"
+    }
+  ],
+  "live_messaging_mtls_mode": "STRICT",
+  "live_kafka_listeners": [
+    {
+      "port": 9094,
+      "tls": true,
+      "authentication": "tls"
+    }
+  ],
+  "live_vault_pods": [
+    {
+      "name": "vault-0",
+      "active": "true",
+      "sealed": "false",
+      "ready": true
+    },
+    {
+      "name": "vault-1",
+      "active": "false",
+      "sealed": "false",
+      "ready": true
+    },
+    {
+      "name": "vault-2",
+      "active": "false",
+      "sealed": "false",
+      "ready": true
+    }
+  ]
+}

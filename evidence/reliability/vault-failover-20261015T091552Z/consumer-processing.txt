@@ -1,0 +1,10 @@
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:15:59,795 INFO event_processed event_id=b832bc4c-a9de-4982-afb8-c568c6769dbd event_type=vault_failover_probe booking_id=VAULT-FO-4 partition=2 offset=5
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:12,971 INFO event_processed event_id=3bd5e935-bf01-43f6-a8ed-8d4c41907620 event_type=vault_failover_probe booking_id=VAULT-FO-16 partition=2 offset=6
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:14,032 INFO event_processed event_id=9eabd7e3-833c-45cd-af8b-b24b87b6ee82 event_type=vault_failover_probe booking_id=VAULT-FO-17 partition=2 offset=7
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:16,206 INFO event_processed event_id=9eb22184-162f-40df-b0bc-11907558105a event_type=vault_failover_probe booking_id=VAULT-FO-19 partition=2 offset=8
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:19,510 INFO event_processed event_id=e08d7131-c7d7-4148-b62c-217a8be76294 event_type=vault_failover_probe booking_id=VAULT-FO-22 partition=2 offset=9
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:29,351 INFO event_processed event_id=352f5541-4561-4700-b624-095c5afbf28d event_type=vault_failover_probe booking_id=VAULT-FO-31 partition=2 offset=10
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:31,591 INFO event_processed event_id=7ba51d69-6819-4ebe-b45a-f7e8c8fbba18 event_type=vault_failover_probe booking_id=VAULT-FO-33 partition=2 offset=11
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:32,674 INFO event_processed event_id=8a0a0a79-0fce-44fc-8fcb-721b9c1e30f9 event_type=vault_failover_probe booking_id=VAULT-FO-34 partition=2 offset=12
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:34,873 INFO event_processed event_id=c0f50bee-cd4b-424b-a198-7a5405f007a5 event_type=vault_failover_probe booking_id=VAULT-FO-36 partition=2 offset=13
+[pod/utravs-consumer-56cdf48d5d-h85mm/consumer] 2026-10-15 09:16:39,273 INFO event_processed event_id=824374ee-f1f5-4ea7-b061-22afe954f3ba event_type=vault_failover_probe booking_id=VAULT-FO-40 partition=2 offset=14

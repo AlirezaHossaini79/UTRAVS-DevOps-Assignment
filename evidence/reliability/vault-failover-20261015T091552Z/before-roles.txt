@@ -1,0 +1,4 @@
+NAME      READY   STATUS    RESTARTS   AGE   VAULT-ACTIVE   VAULT-SEALED
+vault-0   1/1     Running   0          43h   true           false
+vault-1   1/1     Running   0          43h   false          false
+vault-2   1/1     Running   0          43h   false          false

@@ -5,26 +5,21 @@ metadata:
   namespace: argocd
 spec:
   project: default
-
   source:
     repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
     targetRevision: main
-    path: infra/service-mesh/istio/charts/base
+    path: platform/istio-base/chart
     helm:
       releaseName: istio-base
-      valuesObject:
-        defaultRevision: default
-        base:
-          validationFailurePolicy: Fail
-
+      valueFiles:
+      - ../values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
-
   syncPolicy:
     automated:
       prune: false
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
+    - CreateNamespace=true
+    - ServerSideApply=true

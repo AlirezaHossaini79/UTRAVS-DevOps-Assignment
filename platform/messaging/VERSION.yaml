@@ -1,0 +1,11 @@
+name: utravs-messaging
+version: 0.1.0
+appVersion: 1.0.0
+releaseName: messaging
+namespace: messaging
+manager: argocd
+dependencies: []
+download_origin: local project chart
+package: packages/utravs-messaging-0.1.0.tgz
+package_sha256: fa199d1ae1c589439af6dc7ded4d4aa3a04a60b67145baf30fafe6d52c843b0b
+dependency_versions: []

@@ -3,25 +3,21 @@ kind: Application
 metadata:
   name: messaging
   namespace: argocd
-
 spec:
   project: default
-
   source:
     repoURL: git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git
     targetRevision: main
-    path: apps/helm/messaging
+    path: platform/messaging/chart
     helm:
       valueFiles:
-        - values-lab.yaml
-
+      - ../values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: messaging
-
   syncPolicy:
     automated:
       prune: false
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false

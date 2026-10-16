@@ -1,0 +1,109 @@
+{
+  "result": {
+    "resourceSpans": [
+      {
+        "resource": {
+          "attributes": [
+            {
+              "key": "service.name",
+              "value": {
+                "stringValue": "utravs-producer"
+              }
+            }
+          ]
+        },
+        "scopeSpans": [
+          {
+            "spans": [
+              {
+                "traceId": "b05f49b3b8a7b2e61e356817edeb1c11",
+                "spanId": "78a58749695fd616",
+                "flags": 256,
+                "name": "kafka.produce",
+                "kind": 4,
+                "startTimeUnixNano": "1792055799176431850",
+                "endTimeUnixNano": "1792055799251782200",
+                "attributes": [
+                  {
+                    "key": "messaging.destination.name",
+                    "value": {
+                      "stringValue": "utravs-events"
+                    }
+                  },
+                  {
+                    "key": "messaging.system",
+                    "value": {
+                      "stringValue": "kafka"
+                    }
+                  },
+                  {
+                    "key": "utravs.event_id",
+                    "value": {
+                      "stringValue": "824374ee-f1f5-4ea7-b061-22afe954f3ba"
+                    }
+                  }
+                ],
+                "status": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "resource": {
+          "attributes": [
+            {
+              "key": "service.name",
+              "value": {
+                "stringValue": "utravs-consumer"
+              }
+            }
+          ]
+        },
+        "scopeSpans": [
+          {
+            "spans": [
+              {
+                "traceId": "b05f49b3b8a7b2e61e356817edeb1c11",
+                "spanId": "214033d23c6b0a92",
+                "parentSpanId": "78a58749695fd616",
+                "flags": 768,
+                "name": "kafka.consume",
+                "kind": 5,
+                "startTimeUnixNano": "1792055799252026655",
+                "endTimeUnixNano": "1792055799290750820",
+                "attributes": [
+                  {
+                    "key": "messaging.destination.name",
+                    "value": {
+                      "stringValue": "utravs-events"
+                    }
+                  },
+                  {
+                    "key": "messaging.kafka.offset",
+                    "value": {
+                      "intValue": "14"
+                    }
+                  },
+                  {
+                    "key": "messaging.kafka.partition",
+                    "value": {
+                      "intValue": "2"
+                    }
+                  },
+                  {
+                    "key": "messaging.system",
+                    "value": {
+                      "stringValue": "kafka"
+                    }
+                  }
+                ],
+                "status": {}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

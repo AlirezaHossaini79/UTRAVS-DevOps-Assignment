@@ -1,0 +1,11 @@
+name: istiod
+version: 1.31.1
+appVersion: 1.31.1
+releaseName: istiod
+namespace: istio-system
+manager: argocd
+dependencies: []
+download_origin: https://blob.istio.io/istio-release/charts
+package: packages/istiod-1.31.1.tgz
+package_sha256: d49e3ac3100e9c24efbd3a7c26e8e6dd707431f8c06f203182ba54a2e8651a74
+dependency_versions: []
