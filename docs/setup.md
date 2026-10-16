@@ -145,7 +145,7 @@ mkdir -p "$UTRAVS_PRIVATE_DIR/grafana"
 printf '%s' 'utravs-admin' > "$UTRAVS_PRIVATE_DIR/grafana/admin-user"
 # Generate only when the password file does not already exist.
 test -s "$UTRAVS_PRIVATE_DIR/grafana/admin-password" || \
-  openssl rand -hex 32 > "$UTRAVS_PRIVATE_DIR/grafana/admin-password"
+  openssl rand -hex 32 | tr -d '\n' > "$UTRAVS_PRIVATE_DIR/grafana/admin-password"
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n monitoring create secret generic utravs-grafana-admin \
   --from-file=admin-user="$UTRAVS_PRIVATE_DIR/grafana/admin-user" \
