@@ -142,3 +142,10 @@ in milliseconds.
 For application rollback, revert the relevant image tag/values commit and allow
 Argo CD to reconcile. Database/Kafka/Vault upgrades require their own supported
 upgrade and data-compatibility procedure; a chart rollback alone is insufficient.
+
+## Optional features
+
+See [optional features](optional-features.md) for the message-path SLI and provisioned
+Grafana dashboard, native Deployment admission policy and controlled GitOps image
+upgrade/rollback. The [runbook](runbook.md) contains incident commands and recovery
+checks. Live results are stored under `evidence/optional/`.

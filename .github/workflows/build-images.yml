@@ -30,6 +30,10 @@ jobs:
       - name: Validate Python syntax
         run: python -m py_compile apps/${{ matrix.service }}/app.py
 
+      - name: Test message latency calculations
+        if: matrix.service == 'consumer'
+        run: python -m unittest discover -s apps/consumer -p 'test_*.py'
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

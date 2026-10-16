@@ -28,8 +28,65 @@ additionalPrometheusRulesMap:
         annotations:
           summary: UTRAVS consumer lag is high
           description: Consumer lag across unique partitions exceeded 100 for 2 minutes.
+  utravs-message-slo:
+    groups:
+    - name: utravs.message-slo
+      interval: 30s
+      rules:
+      - record: utravs:message_latency_sli:ratio24h
+        expr: >-
+          (sum(increase(utravs_message_end_to_end_seconds_bucket{job="utravs-messaging-istio",le="5.0"}[24h]))
+          / sum(increase(utravs_message_end_to_end_seconds_count{job="utravs-messaging-istio"}[24h])))
+          and on() (sum(increase(utravs_message_end_to_end_seconds_count{job="utravs-messaging-istio"}[24h])) > 0)
+      - record: utravs:message_latency_slo:target
+        expr: vector(0.99)
 grafana:
-  enabled: false
+  enabled: true
+  defaultDashboardsEnabled: false
+  admin:
+    existingSecret: utravs-grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  sidecar:
+    dashboards:
+      enabled: false
+    datasources:
+      enabled: false
+  testFramework:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 384Mi
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: UTRAVS
+          type: file
+          disableDeletion: false
+          editable: false
+          updateIntervalSeconds: 10
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboardsConfigMaps:
+    default: utravs-messaging-slo-dashboard
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          uid: prometheus
+          type: prometheus
+          access: proxy
+          url: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+          isDefault: true
+          editable: false
 defaultRules:
   create: false
 kubeApiServer:

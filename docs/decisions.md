@@ -66,3 +66,13 @@ Production design decisions include isolated administrative access, failure-doma
 placement, storage/backup policy, KMS/HSM auto-unseal, immutable image digests,
 certificate lifecycle management and retention/capacity planning. These decisions
 can be evolved through the same versioned configuration and GitOps workflow.
+
+## Optional controls
+
+A timestamp-based consumer histogram measures message-path latency through
+synchronous offset commit. The rolling 24-hour SLO is 99% of measured successful
+attempts within 5 seconds; producer errors, DLQ and lag provide supporting signals.
+Grafana uses the existing monitoring chart and a provisioned dashboard. Native
+Kubernetes ValidatingAdmissionPolicy enforces minimum security/resource settings
+on messaging Deployment templates without adding a policy-controller dependency.
+Application image upgrades and rollbacks use Git commits and Argo CD reconciliation.

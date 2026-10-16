@@ -9,6 +9,8 @@ three Kafka brokers, Vault HA, Istio, Prometheus/Alertmanager and Jaeger.
 | --- | --- |
 | Installation from prepared VMs to application deployment | [Setup guide](docs/setup.md) |
 | Topology, traffic and trust boundaries | [Architecture](docs/architecture.md) |
+| Optional SLO/dashboard, Policy as Code and GitOps version changes | [Optional features](docs/optional-features.md) |
+| Short incident response procedures | [Runbook](docs/runbook.md) |
 | Design choices, delivery semantics and production differences | [Decisions and trade-offs](docs/decisions.md) |
 | Failure scenarios, observations and measured recovery | [Reliability report](docs/reliability.md) |
 | Technical evidence and validation procedures | [Evidence index](evidence/README.md), [verification guide](docs/verification.md) |
@@ -50,6 +52,7 @@ docs/                        # technical delivery documentation
 | kube-prometheus-stack chart | 91.5.0 |
 | metrics-server chart / image | 3.14.0 / 0.9.0 |
 | Jaeger chart / image | 4.16.0 / 2.22.0 |
+| Grafana (bundled monitoring dependency) | 13.2.2 |
 | Messaging chart | 0.1.0; image tags in environment values |
 
 Argo CD and the Strimzi operator are bootstrap Helm releases. The child Argo CD

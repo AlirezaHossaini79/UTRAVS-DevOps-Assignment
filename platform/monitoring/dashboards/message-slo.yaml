@@ -1,0 +1,339 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: utravs-messaging-slo-dashboard
+  namespace: monitoring
+data:
+  messaging-slo.json: |
+    {
+      "uid": "utravs-message-slo",
+      "title": "UTRAVS Message Path SLO",
+      "tags": [
+        "utravs",
+        "slo",
+        "messaging"
+      ],
+      "timezone": "utc",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "15s",
+      "editable": false,
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Latency SLI \u2014 rolling 24h",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 5
+          },
+          "description": "Successful, timestamp-valid processing attempts completed within 5s / all timestamp-valid successful attempts. SLO: at least 99%. No traffic is No data, not 100%.",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "100 * utravs:message_latency_sli:ratio24h",
+              "instant": true,
+              "legendFormat": "Latency SLI \u2014 rolling 24h"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "noValue": "No data",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 99
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 2,
+          "title": "SLO target",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 5
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "100 * utravs:message_latency_slo:target",
+              "instant": true,
+              "legendFormat": "SLO target"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Measured completions \u2014 24h",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 5
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(utravs_message_end_to_end_seconds_count{job=\"utravs-messaging-istio\"}[24h]))",
+              "instant": true,
+              "legendFormat": "Measured completions \u2014 24h"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Timestamp exclusions \u2014 24h",
+          "type": "stat",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 5
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(utravs_consumer_latency_timestamp_errors_total{job=\"utravs-messaging-istio\"}[24h]))",
+              "instant": true,
+              "legendFormat": "Timestamp exclusions \u2014 24h"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none"
+          }
+        },
+        {
+          "id": 5,
+          "title": "End-to-end latency p95",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 5,
+            "w": 12,
+            "h": 8
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(utravs_message_end_to_end_seconds_bucket{job=\"utravs-messaging-istio\"}[5m])))",
+              "instant": false,
+              "legendFormat": "End-to-end latency p95"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {}
+        },
+        {
+          "id": 6,
+          "title": "Consumer lag",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 5,
+            "w": 12,
+            "h": 8
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(max by (topic, partition) (utravs_consumer_lag{job=\"utravs-messaging-istio\",topic=\"utravs-events\"}))",
+              "instant": false,
+              "legendFormat": "Consumer lag"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {}
+        },
+        {
+          "id": 7,
+          "title": "Producer publish success \u2014 5m",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 13,
+            "w": 12,
+            "h": 7
+          },
+          "description": "",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "100 * sum(rate(utravs_producer_events_total{job=\"utravs-messaging-istio\",result=\"success\"}[5m])) / sum(rate(utravs_producer_events_total{job=\"utravs-messaging-istio\"}[5m]))",
+              "instant": false,
+              "legendFormat": "Producer publish success \u2014 5m"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {}
+        },
+        {
+          "id": 8,
+          "title": "Consumer errors / DLQ \u2014 24h",
+          "type": "timeseries",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 13,
+            "w": 12,
+            "h": 7
+          },
+          "description": "Supporting health signal; the latency SLI alone does not prove delivery completeness.",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(utravs_consumer_errors_total{job=\"utravs-messaging-istio\"}[24h])) + sum(increase(utravs_consumer_dlq_total{job=\"utravs-messaging-istio\"}[24h]))",
+              "instant": false,
+              "legendFormat": "Consumer errors / DLQ \u2014 24h"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "options": {}
+        }
+      ],
+      "annotations": {
+        "list": []
+      }
+    }

@@ -11,9 +11,11 @@ from confluent_kafka import Consumer, KafkaException, Producer
 from opentelemetry.trace import SpanKind
 from otel_tracing import setup_tracing, extract_kafka_context
 from vault_client import VaultClient
+from sli import message_age_seconds
 from prometheus_client import (
     Counter,
     Gauge,
+    Histogram,
     CONTENT_TYPE_LATEST,
     generate_latest,
 )
@@ -57,6 +59,18 @@ consumer_lag = Gauge(
     "utravs_consumer_lag",
     "Estimated unprocessed messages by partition",
     ["topic", "partition"],
+)
+
+
+message_latency = Histogram(
+    "utravs_message_end_to_end_seconds",
+    "Producer timestamp to successful consumer processing and offset commit",
+    buckets=(0.1, 0.25, 0.5, 1, 2, 5, 10, 30, 60),
+)
+
+latency_timestamp_errors = Counter(
+    "utravs_consumer_latency_timestamp_errors_total",
+    "Processed messages excluded from latency measurements due to invalid timestamps",
 )
 
 
@@ -148,6 +162,7 @@ def process_message(message):
         message.offset(),
     )
 
+    return event
 
 
 def send_to_dlq(producer, message, error):
@@ -326,7 +341,7 @@ def main():
                     try:
                         try:
                             verify_event_signature(msg, vault_client)
-                            process_message(msg)
+                            event = process_message(msg)
                             valid = True
 
                         except (ValueError, TypeError, KeyError, UnicodeError) as exc:
@@ -344,6 +359,13 @@ def main():
 
                         if valid:
                             processed_total.inc()
+                            try:
+                                age = message_age_seconds(event.get("timestamp"))
+                            except (ValueError, TypeError, OverflowError):
+                                latency_timestamp_errors.inc()
+                                logger.warning("Latency sample excluded; check producer timestamp and clock sync")
+                            else:
+                                message_latency.observe(age)
                         else:
                             dlq_total.inc()
 

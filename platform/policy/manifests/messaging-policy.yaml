@@ -1,0 +1,45 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: utravs-messaging-deployments
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments]
+  matchConditions:
+    - name: messaging-namespace
+      expression: request.namespace == 'messaging'
+  validations:
+    - expression: >-
+        has(object.spec.template.spec.securityContext) &&
+        has(object.spec.template.spec.securityContext.runAsNonRoot) &&
+        object.spec.template.spec.securityContext.runAsNonRoot == true
+      message: UTRAVS messaging Deployments must set pod runAsNonRoot=true.
+    - expression: >-
+        object.spec.template.spec.containers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.allowPrivilegeEscalation) &&
+          c.securityContext.allowPrivilegeEscalation == false)
+      message: UTRAVS messaging containers must disable privilege escalation.
+    - expression: >-
+        object.spec.template.spec.containers.all(c,
+          has(c.resources) && has(c.resources.requests) && has(c.resources.limits) &&
+          'cpu' in c.resources.requests && 'memory' in c.resources.requests &&
+          'cpu' in c.resources.limits && 'memory' in c.resources.limits)
+      message: UTRAVS messaging containers must declare CPU and memory requests and limits.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: utravs-messaging-deployments
+spec:
+  policyName: utravs-messaging-deployments
+  validationActions: [Warn, Audit]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: messaging

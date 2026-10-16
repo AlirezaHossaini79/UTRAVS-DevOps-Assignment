@@ -135,6 +135,29 @@ or branch, update all Application `repoURL`/`targetRevision` fields consistently
 The referenced files must be committed to that remote before Argo CD can read
 them; applying an Application does not upload local changes.
 
+### Prepare private Grafana credentials before monitoring reconciliation
+
+Grafana uses an existing Secret, not a password in Helm values. On a fresh setup:
+
+```sh
+umask 077
+mkdir -p "$UTRAVS_PRIVATE_DIR/grafana"
+printf '%s' 'utravs-admin' > "$UTRAVS_PRIVATE_DIR/grafana/admin-user"
+# Generate only when the password file does not already exist.
+test -s "$UTRAVS_PRIVATE_DIR/grafana/admin-password" || \
+  openssl rand -hex 32 > "$UTRAVS_PRIVATE_DIR/grafana/admin-password"
+kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n monitoring create secret generic utravs-grafana-admin \
+  --from-file=admin-user="$UTRAVS_PRIVATE_DIR/grafana/admin-user" \
+  --from-file=admin-password="$UTRAVS_PRIVATE_DIR/grafana/admin-password" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Keep these files outside Git. For an existing installation preserve its Secret
+and matching credentials. The root Application also creates `messaging-dashboard`
+and `messaging-policy`; Grafana reads the GitOps-provisioned dashboard ConfigMap.
+See `optional-features.md` for the SLO, policy tests and GitOps version changes.
+
 ## 4. Generate Vault TLS inputs outside Git
 
 For a fresh lab, create a CA and server key with mode `0600`. Stop if either
