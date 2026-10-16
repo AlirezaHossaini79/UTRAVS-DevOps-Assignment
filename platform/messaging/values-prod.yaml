@@ -1,7 +1,7 @@
 producer:
   replicaCount: 3
   image:
-    tag: "sha-7b96a021b4d33da740a5e1235917e871a41ec62d"
+    tag: "sha-697c83017f3bd044857cbeaf6ee9212699056c2e"
 
 consumer:
   replicaCount: 3

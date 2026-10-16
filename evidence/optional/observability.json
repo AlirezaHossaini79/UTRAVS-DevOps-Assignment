@@ -1,0 +1,129 @@
+{
+  "timestamp_utc": "2026-10-16T17:08:43.051160+00:00",
+  "submitted": 80,
+  "grafana": {
+    "version": "13.2.2",
+    "database": "ok",
+    "dashboard_uid": "utravs-message-slo",
+    "provisioned": true,
+    "panels": 8,
+    "datasource_health": "OK"
+  },
+  "matched_consumer_processing": 80,
+  "queries": [
+    {
+      "panel": "Latency SLI \u2014 rolling 24h",
+      "expression": "100 * utravs:message_latency_sli:ratio24h",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.817,
+            "100"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "SLO target",
+      "expression": "100 * utravs:message_latency_slo:target",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.836,
+            "99"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "Measured completions \u2014 24h",
+      "expression": "sum(increase(utravs_message_end_to_end_seconds_count{job=\"utravs-messaging-istio\"}[24h]))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.851,
+            "59.86387777777778"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "Timestamp exclusions \u2014 24h",
+      "expression": "sum(increase(utravs_consumer_latency_timestamp_errors_total{job=\"utravs-messaging-istio\"}[24h]))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.869,
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "End-to-end latency p95",
+      "expression": "histogram_quantile(0.95, sum by (le) (rate(utravs_message_end_to_end_seconds_bucket{job=\"utravs-messaging-istio\"}[5m])))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.89,
+            "0.31311491631483745"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "Consumer lag",
+      "expression": "sum(max by (topic, partition) (utravs_consumer_lag{job=\"utravs-messaging-istio\",topic=\"utravs-events\"}))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.905,
+            "1"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "Producer publish success \u2014 5m",
+      "expression": "100 * sum(rate(utravs_producer_events_total{job=\"utravs-messaging-istio\",result=\"success\"}[5m])) / sum(rate(utravs_producer_events_total{job=\"utravs-messaging-istio\"}[5m]))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.921,
+            "100"
+          ]
+        }
+      ]
+    },
+    {
+      "panel": "Consumer errors / DLQ \u2014 24h",
+      "expression": "sum(increase(utravs_consumer_errors_total{job=\"utravs-messaging-istio\"}[24h])) + sum(increase(utravs_consumer_dlq_total{job=\"utravs-messaging-istio\"}[24h]))",
+      "result": [
+        {
+          "metric": {},
+          "value": [
+            1792170569.939,
+            "0"
+          ]
+        }
+      ]
+    }
+  ],
+  "sli_ratio": 1.0,
+  "slo_target": 0.99,
+  "configured_window": "rolling 24h",
+  "measurement_scope": "timestamp-valid successful processing attempts; not a completeness ratio",
+  "grafana_proxy_query_verified": true,
+  "end_state": {
+    "current_latency_observations": 81.0,
+    "consumer_lag": 0.0,
+    "sli_ratio": 1.0
+  }
+}

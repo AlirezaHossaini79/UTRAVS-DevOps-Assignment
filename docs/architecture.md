@@ -10,6 +10,8 @@ flowchart TB
   Git[Git repository] --> Argo[Argo CD\nroot + child Applications]
   Argo --> K8s[Kubernetes desired state]
   CP --- K8s
+  Argo --> Policy[Native admission policy / messaging Deployments]
+  Policy -.-> K8s
   subgraph Workloads[3 shared control-plane workers + worker-01]
     Producer[Producer + Envoy] -->|TLS client certificate / Kafka| Kafka[3 Kafka KRaft broker/controllers\nStrimzi]
     Kafka -->|TLS client certificate / Kafka| Consumer[Consumer + Envoy]
@@ -23,6 +25,7 @@ flowchart TB
     Vault -->|TLS health probes| Blackbox[2 Vault blackbox probes]
     Blackbox --> Prom
     Prom --> AM[Alertmanager]
+    Prom --> Grafana[Grafana / message-path SLO dashboard]
     Kafka --- Disk[Node-local PVCs / local-path]
     Vault --- Disk
   end
@@ -40,7 +43,7 @@ publishes with `acks=all`. Kafka uses three combined KRaft nodes, replication
 factor 3 and minimum ISR 2. The consumer verifies the signature and commits an
 offset after processing or acknowledged dead-letter publication. OpenTelemetry
 context is propagated in Kafka headers so producer and consumer spans share a
-trace. See [delivery semantics](decisions.md#delivery-semantics).
+trace. See [delivery semantics](decisions.md#kafka-and-message-delivery).
 
 Istio injects sidecars into the messaging namespace; its PeerAuthentication is
 STRICT. Kafka additionally requires TLS client certificates at port 9094, and
@@ -57,3 +60,9 @@ Vault is monitored using certificate-validated health probes for all three pods;
 this collects availability and seal-state signals. Jaeger receives spans over OTLP. Alertmanager receives consumer-lag,
 mesh-degradation and Vault-availability alerts. Persistent lab data uses
 node-local volumes.
+
+The consumer records producer-to-commit latency as a Prometheus histogram.
+Grafana displays the rolling 24-hour 99%-within-5s SLO together with lag and
+errors. Dashboard provisioning and the messaging Deployment admission policy
+are reconciled by two additional Argo CD Applications. See
+[optional controls](optional-features.md) and the [incident runbook](runbook.md).

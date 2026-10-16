@@ -28,7 +28,7 @@ See [the reliability report](../docs/reliability.md) for results and measurement
 interpretation, and [the TLS authentication checks](security/kafka-tls-auth-20261013.txt)
 for certificate rejection/acceptance results.
 
-The 2026-10-16 repository checks passed for nine chart packages (206 rendered
+The initial c5c4901 organization checks on 2026-10-16 passed for nine chart packages (206 rendered
 resources), the alternative messaging values, Ansible syntax/inventory, the
 disabled failover guard and trace parentage. Four nodes were Ready and all ten
 live Argo CD Applications were Synced/Healthy.
@@ -38,3 +38,10 @@ directory without operator files, rendered all nine charts and their packages,
 checked syntax and paths, and tested SSH/Python access to the four Kubernetes
 hosts and two load balancers. Each of the nine child Applications rendered the
 same resources as its previous configuration.
+
+## Optional feature verification
+
+See [optional feature evidence](optional/README.md) for the provisioned SLO
+dashboard, 80 successful synthetic events, native policy acceptance/rejection
+and the GitOps image upgrade, rollback and reapply. Two added child Applications
+manage the dashboard and policy; the platform now has 12 Applications.

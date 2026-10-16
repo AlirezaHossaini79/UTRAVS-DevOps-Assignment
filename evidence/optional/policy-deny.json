@@ -1,0 +1,32 @@
+{
+  "timestamp_utc": "2026-10-16T16:59:30.071998+00:00",
+  "mode": "Deny",
+  "type_checking_warnings": [],
+  "test_scope": "server dry-run; live Deployment unchanged",
+  "cases": [
+    {
+      "case": "valid",
+      "accepted": true,
+      "exit_code": 0,
+      "message": ""
+    },
+    {
+      "case": "root",
+      "accepted": false,
+      "exit_code": 1,
+      "message": "The deployments \"utravs-consumer\" is invalid: : ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments' denied request: UTRAVS messaging Deployments must set pod runAsNonRoot=true."
+    },
+    {
+      "case": "missing-limits",
+      "accepted": false,
+      "exit_code": 1,
+      "message": "The deployments \"utravs-consumer\" is invalid: : ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments' denied request: UTRAVS messaging containers must declare CPU and memory requests and limits."
+    },
+    {
+      "case": "privilege-escalation",
+      "accepted": false,
+      "exit_code": 1,
+      "message": "The deployments \"utravs-consumer\" is invalid: : ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments' denied request: UTRAVS messaging containers must disable privilege escalation."
+    }
+  ]
+}

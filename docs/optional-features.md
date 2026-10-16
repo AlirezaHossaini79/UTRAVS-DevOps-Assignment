@@ -58,16 +58,22 @@ policy engine or Istio CNI change is needed for these application-template check
 ```sh
 kubectl get validatingadmissionpolicy utravs-messaging-deployments -o yaml
 kubectl get validatingadmissionpolicybinding utravs-messaging-deployments -o yaml
-kubectl -n messaging get deployment utravs-consumer -o json > /tmp/consumer-policy-check.json
-kubectl apply --dry-run=server -f /tmp/consumer-policy-check.json
+# Accepted: the existing non-root setting.
+kubectl -n messaging patch deployment utravs-consumer --type=json --dry-run=server \
+  -p='[{"op":"replace","path":"/spec/template/spec/securityContext/runAsNonRoot","value":true}]'
+# Rejected: a conflicting pod security setting.
+kubectl -n messaging patch deployment utravs-consumer --type=json --dry-run=server \
+  -p='[{"op":"replace","path":"/spec/template/spec/securityContext/runAsNonRoot","value":false}]'
+# Rejected: missing resource limits.
+kubectl -n messaging patch deployment utravs-consumer --type=json --dry-run=server \
+  -p='[{"op":"remove","path":"/spec/template/spec/containers/0/resources/limits"}]'
+# Rejected: privilege escalation.
+kubectl -n messaging patch deployment utravs-consumer --type=json --dry-run=server \
+  -p='[{"op":"replace","path":"/spec/template/spec/containers/0/securityContext/allowPrivilegeEscalation","value":true}]'
 ```
 
-To test rejection without changing the live workload, make a disposable copy of
-the Deployment manifest, retain namespace/name, remove `status`, `resourceVersion`,
-`uid`, `managedFields` and timestamps, set the pod's `runAsNonRoot` to false,
-and run the same server-side dry-run. It must be rejected. Test missing resource
-requests/limits and privilege escalation separately. Restore the test file only;
-the live Deployment was never changed by a dry-run.
+The three negative commands must exit nonzero with the policy's denial message.
+All are server-side dry-runs: the live Deployment is not changed.
 
 ## Controlled GitOps application upgrade and rollback
 
@@ -91,3 +97,9 @@ part of this application-image demonstration.
 
 The short incident procedures are in `runbook.md`. Sanitized live results are
 stored under `evidence/optional/`.
+
+## Observed verification
+
+The [verification records](../evidence/optional/README.md) include 80 accepted and
+processed synthetic events, all eight dashboard queries, zero final lag, native
+policy denials and a validated A-to-B-to-A-to-B Consumer image sequence.

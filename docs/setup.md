@@ -203,6 +203,11 @@ kubectl wait crd/peerauthentications.security.istio.io --for=condition=Establish
 kubectl apply -f infra/gitops/argocd/applications/istiod.yaml
 kubectl -n argocd wait application/istiod --for=jsonpath='{.status.sync.status}'=Synced --timeout=10m
 kubectl -n istio-system rollout status deployment/istiod --timeout=10m
+kubectl apply -f infra/gitops/argocd/applications/messaging-dashboard.yaml
+kubectl -n argocd wait application/messaging-dashboard --for=jsonpath='{.status.sync.status}'=Synced --timeout=5m
+kubectl -n monitoring get configmap utravs-messaging-slo-dashboard
+kubectl apply -f infra/gitops/argocd/applications/messaging-policy.yaml
+kubectl -n argocd wait application/messaging-policy --for=jsonpath='{.status.sync.status}'=Synced --timeout=5m
 kubectl apply -f infra/gitops/argocd/applications/monitoring.yaml
 kubectl apply -f infra/gitops/argocd/applications/metrics-server.yaml
 kubectl apply -f infra/gitops/argocd/applications/jaeger.yaml
@@ -303,7 +308,7 @@ kubectl -n messaging create secret generic ghcr-pull --type=kubernetes.io/docker
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-`platform/messaging/values-prod.yaml` selects three replicas for the production
+Overlay `platform/messaging/values-prod.yaml` after `values.yaml` to select three replicas for the production
 environment profile. Set its image tags and resources for the target environment.
 
 After changing public CA files, repackage the local messaging chart and update

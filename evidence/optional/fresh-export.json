@@ -1,0 +1,65 @@
+{
+  "source_tree": "521d1df57cdd54f36a90f858acb98bf6e3f66d3d",
+  "clean_git_export": true,
+  "excluded_runtime_and_git": true,
+  "charts": [
+    {
+      "service": "argocd",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 62
+    },
+    {
+      "service": "istio-base",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 17
+    },
+    {
+      "service": "istiod",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 17
+    },
+    {
+      "service": "jaeger",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 3
+    },
+    {
+      "service": "messaging",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 9
+    },
+    {
+      "service": "metrics-server",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 9
+    },
+    {
+      "service": "monitoring",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 44
+    },
+    {
+      "service": "strimzi",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 21
+    },
+    {
+      "service": "vault",
+      "package_sha256": "matched",
+      "source_package_render": "equal",
+      "resources": 12
+    }
+  ],
+  "total_chart_resources": 194,
+  "production_overlay": "rendered with base values",
+  "new_gitops_paths": "exist",
+  "latency_unit_tests": "3 passed"
+}

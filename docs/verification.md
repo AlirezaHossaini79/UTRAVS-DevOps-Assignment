@@ -13,7 +13,7 @@ ansible-playbook -i ../inventory-utravs/inventory.ini cluster.yml --syntax-check
 cd ../../..
 helm lint platform/messaging/chart -f platform/messaging/values.yaml
 helm template messaging platform/messaging/chart -n messaging -f platform/messaging/values.yaml >/dev/null
-helm template messaging platform/messaging/chart -n messaging -f platform/messaging/values-prod.yaml >/dev/null
+helm template messaging platform/messaging/chart -n messaging -f platform/messaging/values.yaml -f platform/messaging/values-prod.yaml >/dev/null
 ```
 
 For each `platform/*/VERSION.yaml`, verify `package_sha256` against the adjacent

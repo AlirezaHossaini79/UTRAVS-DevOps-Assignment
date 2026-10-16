@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "git diff --check",
+    "3 latency unit tests",
+    "consumer Python syntax",
+    "Prometheus rule syntax",
+    "monitoring Helm lint/render",
+    "messaging Helm lint/render",
+    "native policy API dry-run",
+    "dashboard ConfigMap API dry-run",
+    "runbook Vault status command",
+    "external Grafana Secret prepared without logging credentials"
+  ]
+}

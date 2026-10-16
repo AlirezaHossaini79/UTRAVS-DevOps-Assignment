@@ -1,0 +1,59 @@
+{
+  "stage": "final",
+  "timestamp_utc": "2026-10-16T17:08:35.444069+00:00",
+  "deployments": [
+    {
+      "name": "utravs-producer",
+      "image": "ghcr.io/alirezahossaini79/utravs-producer:sha-697c83017f3bd044857cbeaf6ee9212699056c2e",
+      "ready": 2,
+      "generation": 12
+    },
+    {
+      "name": "utravs-consumer",
+      "image": "ghcr.io/alirezahossaini79/utravs-consumer:sha-a91a431b36f5c588e79470d4877a9b559671cff2",
+      "ready": 2,
+      "generation": 14
+    }
+  ],
+  "argocd": {
+    "sync": {
+      "comparedTo": {
+        "destination": {
+          "namespace": "messaging",
+          "server": "https://kubernetes.default.svc"
+        },
+        "source": {
+          "helm": {
+            "valueFiles": [
+              "../values.yaml"
+            ]
+          },
+          "path": "platform/messaging/chart",
+          "repoURL": "git@github.com:AlirezaHossaini79/UTRAVS-DevOps-Assignment.git",
+          "targetRevision": "main"
+        }
+      },
+      "revision": "343e3668e70533205a7b39f4f12cb0fb2af5493e",
+      "status": "Synced"
+    },
+    "health": {
+      "lastTransitionTime": "2026-10-16T17:07:31Z",
+      "status": "Healthy"
+    }
+  },
+  "event": {
+    "http_status": 201,
+    "status": "delivered",
+    "event_id": "1b2586e0-7ae2-4226-a72a-dd070dfffb8a",
+    "partition": 1,
+    "offset": 25
+  },
+  "consumer_processing": [
+    "[pod/utravs-consumer-5bd4f7c897-469kr/consumer] 2026-10-16 17:08:36,761 INFO event_processed event_id=1b2586e0-7ae2-4226-a72a-dd070dfffb8a event_type=optional.verification booking_id=optional-final partition=1 offset=25"
+  ],
+  "consumer_image_ids": [
+    "ghcr.io/alirezahossaini79/utravs-consumer@sha256:2f509dd65385b7353645741cdf8562147910249f0034196c4377b1b9fd70866e",
+    "ghcr.io/alirezahossaini79/utravs-consumer@sha256:2f509dd65385b7353645741cdf8562147910249f0034196c4377b1b9fd70866e"
+  ],
+  "strict_mtls": "STRICT"
+}

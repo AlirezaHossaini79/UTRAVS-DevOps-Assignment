@@ -1,0 +1,25 @@
+{
+  "mode": "Warn/Audit",
+  "cases": [
+    {
+      "case": "valid",
+      "exit_code": 0,
+      "warning": ""
+    },
+    {
+      "case": "root",
+      "exit_code": 0,
+      "warning": "Warning: Validation failed for ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments': UTRAVS messaging Deployments must set pod runAsNonRoot=true."
+    },
+    {
+      "case": "missing-limits",
+      "exit_code": 0,
+      "warning": "Warning: Validation failed for ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments': UTRAVS messaging containers must declare CPU and memory requests and limits."
+    },
+    {
+      "case": "privilege-escalation",
+      "exit_code": 0,
+      "warning": "Warning: Validation failed for ValidatingAdmissionPolicy 'utravs-messaging-deployments' with binding 'utravs-messaging-deployments': UTRAVS messaging containers must disable privilege escalation."
+    }
+  ]
+}
