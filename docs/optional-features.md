@@ -38,6 +38,23 @@ wait for at least two 30-second scrapes, and compare the observed SLI with 99%.
 The configured window is 24 hours; the displayed sample count shows how much
 traffic actually supports the current value.
 
+When using the jump server, first open an SSH tunnel from your laptop:
+
+```sh
+ssh -L 3000:127.0.0.1:3000 interview@192.168.149.20
+```
+
+Run the Kubernetes port-forward above in that SSH session and keep it open.
+The URL then opens on your laptop. For this installation the username is
+`utravs-admin`; retrieve the password from the operator's private
+`~/.local/share/utravs/grafana/admin-password` file on the jump server.
+
+Grafana requests 250m CPU and 512Mi memory, with limits of 1 CPU and 1Gi.
+The earlier 500m/384Mi limits allowed API smoke tests but saturated during
+interactive login, causing internal API timeouts and a failing readiness probe.
+Verify both `/api/health` and an authenticated dashboard page after changes;
+an API-only dashboard check does not verify the interactive login path.
+
 ## Policy as Code
 
 The native Kubernetes `ValidatingAdmissionPolicy` and binding are in

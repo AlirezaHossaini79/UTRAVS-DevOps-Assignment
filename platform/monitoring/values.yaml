@@ -56,11 +56,11 @@ grafana:
     enabled: false
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 250m
+      memory: 512Mi
     limits:
-      cpu: 500m
-      memory: 384Mi
+      cpu: '1'
+      memory: 1Gi
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
